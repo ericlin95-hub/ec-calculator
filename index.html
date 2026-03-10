@@ -662,13 +662,13 @@ body::before {
         <div class="panel-body">
 
           <div class="scheme-toggle">
-            <button class="scheme-btn active" id="btn-dps" onclick="setScheme('dps')">
-              <span class="sb-label">DPS</span>
-              <span class="sb-sub">Deferred Payment</span>
-            </button>
-            <button class="scheme-btn" id="btn-nps" onclick="setScheme('nps')">
+            <button class="scheme-btn active" id="btn-nps" onclick="setScheme('nps')">
               <span class="sb-label">NPS</span>
               <span class="sb-sub">Normal Progressive</span>
+            </button>
+            <button class="scheme-btn" id="btn-dps" onclick="setScheme('dps')">
+              <span class="sb-label">DPS</span>
+              <span class="sb-sub">Deferred Payment</span>
             </button>
           </div>
 
@@ -787,7 +787,7 @@ body::before {
 </div>
 
 <script>
-let scheme = 'dps';
+let scheme = 'nps';
 let dblEnabled = false;
 
 function setScheme(s) {
