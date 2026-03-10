@@ -776,6 +776,47 @@ body::before {
         <strong>BSD is auto-calculated</strong> using IRAS bands and added to your payment schedule. CPF is strategically deployed at TOP to minimise cash outlay.
       </div>
 
+      <!-- DBL Calculator Panel -->
+      <div class="panel" id="dbl-calc-panel" style="display:none;">
+        <div class="panel-header">
+          <div class="ph-icon">🏦</div>
+          <div>
+            <h2>DBL Calculator</h2>
+            <p>DBS Deferred Bridging Loan estimate</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="input-group">
+            <div class="input-label">Current Indicative Valuation <span class="lbl-hint">Your HDB</span></div>
+            <div class="input-wrap">
+              <span class="input-prefix">$</span>
+              <input type="text" id="dbl-valuation" placeholder="e.g. 500,000" oninput="calcDBL()">
+            </div>
+          </div>
+          <div class="input-group">
+            <div class="input-label">Outstanding Loan <span class="lbl-hint">Remaining HDB loan</span></div>
+            <div class="input-wrap">
+              <span class="input-prefix">$</span>
+              <input type="text" id="dbl-outstanding" placeholder="e.g. 100,000" oninput="calcDBL()">
+            </div>
+          </div>
+
+          <!-- DBL Result -->
+          <div id="dbl-calc-result" style="display:none; margin-top:16px;">
+            <div class="section-divider"><span>Breakdown</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="dbl-calc-lines"></div>
+            <div style="background:var(--gold-dim);border:1px solid rgba(212,168,67,0.35);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);">Max DBL</span>
+              <span id="dbl-calc-max" style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--gold);"></span>
+            </div>
+            <button onclick="applyDBL()" style="width:100%;margin-top:10px;padding:11px;background:var(--gold-dim);border:1px solid rgba(212,168,67,0.35);border-radius:10px;color:var(--gold);font-family:Outfit,sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;"
+              onmouseover="this.style.background='rgba(212,168,67,0.25)'" onmouseout="this.style.background='var(--gold-dim)'">
+              ↑ Apply this amount to DBL field above
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Booking Date Panel -->
       <div class="panel">
         <div class="panel-header">
@@ -842,6 +883,7 @@ function toggleDBL() {
   dblEnabled = !dblEnabled;
   document.getElementById('dbl-toggle').classList.toggle('on', dblEnabled);
   document.getElementById('dbl-fields').classList.toggle('visible', dblEnabled);
+  document.getElementById('dbl-calc-panel').style.display = dblEnabled ? 'block' : 'none';
   const _d2 = getStore(); _d2.dbl_on = dblEnabled ? '1' : '0'; setStore(_d2);
   if (document.getElementById('price').value) calc();
 }
@@ -919,19 +961,25 @@ function calc() {
     // Optimal: Use as little CPF as possible early, save max for TOP
 
     // Step 1: How much CPF needed at TOP?
-    const cpfForTOP = Math.min(cpfTotal, Math.max(0, topNeeds - dblTotal));
-    const cpfForBSD = Math.min(cpfTotal - cpfForTOP, bsd);
-    const cpfForSP = Math.min(cpfTotal - cpfForTOP - cpfForBSD, sp);
-    const cpfUsed = cpfForTOP + cpfForBSD + cpfForSP;
+    // MAS order: Cash first, CPF second, Loan last
+    // CPF strategy: use CPF at S&P first, then BSD, then TOP
+    // DBL fills gap at TOP after CPF + Loan
+    const cpfForSP  = Math.min(cpfTotal, sp);
+    const cpfForBSD = Math.min(cpfTotal - cpfForSP, bsd);
+    // CPF at TOP: only what's needed after loan fills its share, capped at remaining CPF
+    const cpfRemaining = Math.max(0, cpfTotal - cpfForSP - cpfForBSD);
+    const topAfterLoan = Math.max(0, topNeeds); // topNeeds already has loan subtracted
+    const cpfForTOP = Math.min(cpfRemaining, topAfterLoan);
 
     // Cash at each stage
     const cashBooking = booking;
-    const cashSP = sp - cpfForSP;
+    const cashSP  = sp  - cpfForSP;
     const cashBSD = bsd - cpfForBSD;
 
-    // At TOP after CPF + DBL + Loan
-    const dblUsed = Math.min(dblTotal, Math.max(0, topNeeds - cpfForTOP));
-    const cashTOP = Math.max(0, topNeeds - cpfForTOP - dblUsed);
+    // At TOP: loan already deducted in topNeeds; fill with CPF then DBL then cash
+    const topAfterCPF = Math.max(0, topNeeds - cpfForTOP);
+    const dblUsed = Math.min(dblTotal, topAfterCPF);
+    const cashTOP = Math.max(0, topAfterCPF - dblUsed);
 
     const totalCash = cashBooking + cashSP + cashBSD + cashTOP;
     const totalCPF = cpfForBSD + cpfForSP + cpfForTOP;
@@ -1217,7 +1265,7 @@ function buildBar(cash, cpf, loan, dbl, total) {
 }
 
 // Format inputs with commas as user types
-['price','cpf','loan','dbl'].forEach(id => {
+['price','cpf','loan','dbl','dbl-valuation','dbl-outstanding'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('input', function() {
     const raw = this.value.replace(/[^0-9]/g, '');
@@ -1225,6 +1273,63 @@ function buildBar(cash, cpf, loan, dbl, total) {
     this.value = formatted;
   });
 });
+
+// ── DBL Calculator ──
+function calcDBL() {
+  const val = parseNum('dbl-valuation');
+  const outstanding = parseNum('dbl-outstanding');
+  if (!val) {
+    document.getElementById('dbl-calc-result').style.display = 'none';
+    return;
+  }
+
+  // DBS formula:
+  // 85% of valuation
+  // Less: outstanding loan
+  // Less: HDB option money $5,000
+  // Less: agent commission 2% of valuation
+  const p85        = Math.round(val * 0.85);
+  const commission = Math.round(val * 0.02);
+  const optionMoney = 5000;
+  const maxDBL     = Math.max(0, p85 - outstanding - optionMoney - commission);
+
+  const lines = [
+    { label: '85% of Indicative Valuation', value: p85, color: 'var(--cpf)' },
+    { label: 'Less: Outstanding Loan', value: -outstanding, color: 'var(--cash)' },
+    { label: 'Less: HDB Option Money', value: -optionMoney, color: 'var(--cash)' },
+    { label: 'Less: Agent Commission (2%)', value: -commission, color: 'var(--cash)' },
+  ];
+
+  let linesHTML = '';
+  for (const l of lines) {
+    linesHTML += `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:12px;color:var(--text-dim);">${l.label}</span>
+        <span style="font-size:13px;font-weight:600;color:${l.color};">${l.value < 0 ? '-' : ''}$${Math.abs(l.value).toLocaleString('en-SG')}</span>
+      </div>`;
+  }
+
+  document.getElementById('dbl-calc-lines').innerHTML = linesHTML;
+  document.getElementById('dbl-calc-max').textContent = '$' + maxDBL.toLocaleString('en-SG');
+  document.getElementById('dbl-calc-result').style.display = 'block';
+
+  // Save to store
+  const data = getStore();
+  data.dbl_valuation  = document.getElementById('dbl-valuation').value;
+  data.dbl_outstanding = document.getElementById('dbl-outstanding').value;
+  setStore(data);
+}
+
+function applyDBL() {
+  const maxText = document.getElementById('dbl-calc-max').textContent;
+  if (!maxText) return;
+  const val = maxText.replace(/[^0-9]/g, '');
+  const formatted = parseInt(val).toLocaleString('en-SG');
+  document.getElementById('dbl').value = formatted;
+  saveAndCalc();
+  // Scroll to results
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
 
 // ── Persistence via URL hash (works on iPhone iCloud, no server needed) ──
 function getStore() {
@@ -1282,7 +1387,12 @@ function loadSaved() {
   });
 
   if (data.scheme) setScheme(data.scheme);
-  if (data.dbl_on === '1' && !dblEnabled) toggleDBL();
+  if (data.dbl_on === '1' && !dblEnabled) toggleDBL(); // toggleDBL handles showing dbl-calc-panel
+  if (data.dbl_valuation) {
+    document.getElementById('dbl-valuation').value = data.dbl_valuation;
+    document.getElementById('dbl-outstanding').value = data.dbl_outstanding || '';
+    calcDBL();
+  }
 
   if (data.otp_date) {
     document.getElementById('otp-date').value = data.otp_date;
