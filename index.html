@@ -1101,31 +1101,36 @@ function calc() {
     // At TOP: need to fill (top - loanAtTOP) with CPF + DBL + Cash
     const topNeeds = top - loanAtTOP;
 
-    // DPS CPF strategy (optimal):
-    // S&P = CASH ONLY (no CPF at S&P in DPS)
-    // TOP = CPF allocated to cover exactly (topNeeds - DBL), maximising DBL usage
-    // BSD = remaining CPF after TOP allocation (up to BSD amount), rest cash
-    // This minimises total cash outlay across all stages.
+    // DPS CPF strategy (MAS order: Cash → CPF → Loan):
+    // Goal: minimise total cash by deploying CPF optimally across stages.
+    // CPF CAN be used at S&P, BSD, and TOP — no restriction on which stage.
+    //
+    // Optimal allocation:
+    //   1. Reserve CPF for TOP first: cpfForTOP = topNeeds - dblTotal
+    //      (so DBL fills the gap perfectly, leaving zero cash at TOP)
+    //   2. Remaining CPF → BSD first (smaller amount, clears it early)
+    //   3. Any further remaining CPF → S&P (reduces upfront cash)
+    //
+    // This order minimises total cash across all stages.
 
-    // Step 1: S&P is always full cash
-    const cpfForSP = 0;
-
-    // Step 2: Allocate CPF to TOP optimally — leave exactly enough gap for DBL
-    // cpfForTOP = topNeeds - dblTotal (so DBL fills the rest perfectly)
-    // Capped at: available CPF, and topNeeds (can't exceed what's needed)
+    // Step 1: How much CPF is needed at TOP to let DBL cover the rest perfectly?
     const cpfForTOP_ideal = Math.max(0, topNeeds - dblTotal);
     const cpfForTOP = Math.min(cpfTotal, cpfForTOP_ideal);
 
-    // Step 3: Remaining CPF goes to BSD (saves some upfront cash)
-    const cpfRemaining = Math.max(0, cpfTotal - cpfForTOP);
-    const cpfForBSD = Math.min(cpfRemaining, bsd);
+    // Step 2: Remaining CPF after TOP allocation → BSD first
+    const cpfAfterTOP = Math.max(0, cpfTotal - cpfForTOP);
+    const cpfForBSD = Math.min(cpfAfterTOP, bsd);
 
-    // Cash at each stage
+    // Step 3: Any CPF still remaining → S&P
+    const cpfAfterBSD = Math.max(0, cpfAfterTOP - cpfForBSD);
+    const cpfForSP = Math.min(cpfAfterBSD, sp);
+
+    // Cash at each stage (MAS: Cash = Amount - CPF - Loan)
     const cashBooking = booking;
-    const cashSP  = sp;                    // 100% cash at S&P
-    const cashBSD = bsd - cpfForBSD;       // remaining BSD after CPF
+    const cashSP  = sp  - cpfForSP;
+    const cashBSD = bsd - cpfForBSD;
 
-    // At TOP: CPF first, then DBL, then any remaining cash
+    // At TOP: CPF first, then DBL, then remaining cash
     const topAfterCPF = Math.max(0, topNeeds - cpfForTOP);
     const dblUsed = Math.min(dblTotal, topAfterCPF);
     const cashTOP = Math.max(0, topAfterCPF - dblUsed);
