@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EC Financial Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0D0D0F;
@@ -36,7 +36,9 @@
 
 body {
   background: var(--bg);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
+  font-feature-settings: 'cv02','cv03','cv04','cv11'; /* Inter optical improvements */
+  -webkit-font-smoothing: antialiased;
   color: var(--text);
   min-height: 100vh;
   line-height: 1.5;
@@ -79,9 +81,9 @@ body::before {
   margin-bottom: 16px;
 }
 .header h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(32px, 5vw, 52px);
-  font-weight: 600;
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(30px, 5vw, 48px);
+  font-weight: 400;
   color: var(--text);
   line-height: 1.1;
   margin-bottom: 10px;
@@ -95,6 +97,14 @@ body::before {
   grid-template-columns: 380px 1fr;
   gap: 24px;
   align-items: start;
+}
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .results-panel {
+    order: -1; /* Results appear ABOVE inputs on mobile */
+  }
 }
 
 /* ── Panel ── */
@@ -146,7 +156,7 @@ body::before {
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-dim);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -202,7 +212,7 @@ body::before {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px 12px 28px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 500;
   color: var(--text);
@@ -329,12 +339,13 @@ body::before {
   display: block;
 }
 .sum-card .sc-amt {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text);
   display: block;
   line-height: 1;
+  letter-spacing: -0.5px;
 }
 .sum-card.c-cash { border-top: 2px solid var(--cash); }
 .sum-card.c-cash .sc-tag { color: var(--cash); }
@@ -361,7 +372,7 @@ body::before {
 .feas-label { font-size: 14px; font-weight: 600; }
 .feas-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 .feas-shortfall {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 20px;
   font-weight: 700;
   text-align: right;
@@ -385,8 +396,8 @@ body::before {
   text-transform: uppercase;
   color: var(--text-muted);
 }
-.st-header.nps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr; }
-.st-header.dps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; }
+.st-header.nps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
+.st-header.dps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
 
 .st-row {
   display: grid;
@@ -394,11 +405,61 @@ body::before {
   border-bottom: 1px solid var(--border);
   align-items: center;
   transition: background 0.15s;
+  cursor: pointer;
 }
 .st-row:last-child { border-bottom: none; }
 .st-row:hover { background: var(--surface2); }
-.st-row.nps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr; }
-.st-row.dps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; }
+.st-row.expanded { background: var(--surface2); }
+
+/* Expanded detail card under each row */
+.row-detail {
+  display: none;
+  padding: 12px 20px 16px 20px;
+  background: rgba(212,168,67,0.04);
+  border-bottom: 1px solid var(--border);
+  animation: fadeIn 0.2s ease;
+}
+.row-detail.visible { display: block; }
+.row-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+.rd-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.rd-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.rd-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+.rd-value.cash { color: var(--cash); }
+.rd-value.cpf  { color: var(--cpf);  }
+.rd-value.loan { color: var(--loan); }
+.rd-value.dbl  { color: var(--dbl);  }
+.rd-value.total{ color: var(--gold); }
+.rd-value.nil  { color: var(--text-muted); font-size: 14px; }
+.st-row-chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: auto;
+  transition: transform 0.2s;
+  grid-column: -1;
+}
+.st-row.expanded .st-row-chevron { transform: rotate(180deg); }
+.st-row.nps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
+.st-row.dps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
 .st-row.nil-row { opacity: 0.5; }
 .st-row.total-row {
   background: var(--gold-glow);
@@ -408,7 +469,8 @@ body::before {
 
 .st-stage { font-size: 13px; font-weight: 500; color: var(--text); }
 .st-stage .stage-when { font-size: 10px; color: var(--text-muted); font-weight: 400; display: block; margin-top: 2px; }
-.st-num { font-size: 13px; font-weight: 500; color: var(--text); text-align: right; }
+.st-stage .stage-date { font-size: 11px; color: var(--gold); font-weight: 600; display: block; margin-top: 3px; letter-spacing: 0.2px; }
+.st-num { font-size: 13px; font-weight: 500; color: var(--text); text-align: right; padding: 0 4px; }
 .st-num.cash { color: var(--cash); }
 .st-num.cpf { color: var(--cpf); }
 .st-num.loan { color: var(--loan); }
@@ -500,6 +562,78 @@ body::before {
 }
 .info-box strong { color: var(--gold); }
 
+/* Upfront Cash Callout */
+.upfront-callout {
+  background: linear-gradient(135deg, rgba(232,117,106,0.08), rgba(212,168,67,0.06));
+  border: 1px solid rgba(232,117,106,0.25);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 4px;
+}
+.uc-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cash);
+  margin-bottom: 14px;
+}
+.uc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.uc-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 90px;
+}
+.uc-tag {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+}
+.uc-val {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+.uc-val.cash { color: var(--cash); }
+.uc-divider {
+  font-size: 16px;
+  color: var(--text-muted);
+  font-weight: 300;
+  flex-shrink: 0;
+  padding-top: 14px;
+}
+.uc-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(232,117,106,0.2);
+}
+.uc-total span:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+.uc-total-val {
+  font-family: 'Inter', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--cash);
+}
+
 /* Total Summary Row */
 .total-summary-row {
   background: var(--gold-glow);
@@ -515,18 +649,21 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 4px 0;
 }
 
 .ts-label {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text-dim);
+  letter-spacing: 0.3px;
 }
 
 .ts-value {
-  font-size: 15px;
+  font-size: 22px;
   font-weight: 700;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.5px;
 }
 
 .ts-value.cash { color: var(--cash); }
@@ -577,31 +714,36 @@ body::before {
   background: var(--gold-glow);
 }
 .bk-box .bk-title {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--text);
   margin-bottom: 4px;
   line-height: 1.3;
+  letter-spacing: 0.1px;
 }
 .bk-box .bk-date {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--gold);
   margin-bottom: 3px;
 }
 .bk-box .bk-amount {
-  font-size: 11px;
-  font-weight: 600;
-  margin-top: 4px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  margin-top: 8px;
+  padding: 5px 10px;
+  border-radius: 7px;
   display: inline-block;
+  letter-spacing: -0.3px;
+  width: 100%;
+  text-align: center;
 }
-.bk-box .bk-amount.cash { background: var(--cash-dim); color: var(--cash); }
-.bk-box .bk-amount.cpf { background: var(--cpf-dim); color: var(--cpf); }
-.bk-box .bk-amount.mixed { background: var(--gold-dim); color: var(--gold); }
-.bk-box .bk-amount.free { background: rgba(91,184,138,0.15); color: var(--green); }
+.bk-box .bk-amount.cash  { background: var(--cash-dim);              color: var(--cash); }
+.bk-box .bk-amount.cpf   { background: var(--cpf-dim);               color: var(--cpf);  }
+.bk-box .bk-amount.mixed { background: var(--gold-dim);              color: var(--gold); }
+.bk-box .bk-amount.free  { background: rgba(91,184,138,0.15);        color: var(--green); }
 
 /* Bracket arrows below spine */
 .bk-brackets {
@@ -667,10 +809,12 @@ body::before {
 .anim { animation: fadeIn 0.4s ease both; }
 
 /* Responsive */
-@media (max-width: 800px) {
-  .layout { grid-template-columns: 1fr; }
+@media (max-width: 860px) {
   .summary-strip { grid-template-columns: repeat(2,1fr); }
   .st-header, .st-row { font-size: 11px; gap: 4px; }
+  .app { padding: 20px 16px; }
+  .panel-body { padding: 16px; }
+  .panel-header { padding: 14px 16px 12px; }
 }
 </style>
 </head>
@@ -680,7 +824,7 @@ body::before {
   <div class="header">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
       <div class="header-badge">⬡ PropNex EC Tool</div>
-      <button onclick="clearAll()" style="background:rgba(232,117,106,0.1);border:1px solid rgba(232,117,106,0.25);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--cash);cursor:pointer;font-family:Outfit,sans-serif;">✕ Clear All</button>
+      <button onclick="clearAll()" style="background:rgba(232,117,106,0.1);border:1px solid rgba(232,117,106,0.25);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--cash);cursor:pointer;font-family:'Inter',sans-serif;">✕ Clear All</button>
     </div>
     <h1>EC Financial <span>Calculator</span></h1>
     <p>Input your client's numbers to instantly see full cash, CPF and loan breakdown by stage</p>
@@ -807,9 +951,9 @@ body::before {
             <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="dbl-calc-lines"></div>
             <div style="background:var(--gold-dim);border:1px solid rgba(212,168,67,0.35);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
               <span style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);">Max DBL</span>
-              <span id="dbl-calc-max" style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--gold);"></span>
+              <span id="dbl-calc-max" style="font-family:'Inter',sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.5px;color:var(--gold);"></span>
             </div>
-            <button onclick="applyDBL()" style="width:100%;margin-top:10px;padding:11px;background:var(--gold-dim);border:1px solid rgba(212,168,67,0.35);border-radius:10px;color:var(--gold);font-family:Outfit,sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;"
+            <button onclick="applyDBL()" style="width:100%;margin-top:10px;padding:11px;background:var(--gold-dim);border:1px solid rgba(212,168,67,0.35);border-radius:10px;color:var(--gold);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;"
               onmouseover="this.style.background='rgba(212,168,67,0.25)'" onmouseout="this.style.background='var(--gold-dim)'">
               ↑ Apply this amount to DBL field above
             </button>
@@ -869,6 +1013,7 @@ body::before {
 
 <script>
 let scheme = 'nps';
+let stageDates = {}; // populated by calcDates, used by renderResults
 let dblEnabled = false;
 
 function setScheme(s) {
@@ -926,6 +1071,7 @@ function calcBSD(price) {
 }
 
 function calc() {
+  window._calcInProgress = true;
   const price = parseNum('price');
   const cpfTotal = parseNum('cpf');
   const loanTotal = parseNum('loan');
@@ -955,28 +1101,31 @@ function calc() {
     // At TOP: need to fill (top - loanAtTOP) with CPF + DBL + Cash
     const topNeeds = top - loanAtTOP;
 
-    // CPF strategy: reserve CPF for TOP to minimize cash there
-    // BSD: use CPF first up to CPF total, rest cash
-    // S&P: use remaining CPF, rest cash (but we want to save CPF for TOP)
-    // Optimal: Use as little CPF as possible early, save max for TOP
+    // DPS CPF strategy (optimal):
+    // S&P = CASH ONLY (no CPF at S&P in DPS)
+    // TOP = CPF allocated to cover exactly (topNeeds - DBL), maximising DBL usage
+    // BSD = remaining CPF after TOP allocation (up to BSD amount), rest cash
+    // This minimises total cash outlay across all stages.
 
-    // Step 1: How much CPF needed at TOP?
-    // MAS order: Cash first, CPF second, Loan last
-    // CPF strategy: use CPF at S&P first, then BSD, then TOP
-    // DBL fills gap at TOP after CPF + Loan
-    const cpfForSP  = Math.min(cpfTotal, sp);
-    const cpfForBSD = Math.min(cpfTotal - cpfForSP, bsd);
-    // CPF at TOP: only what's needed after loan fills its share, capped at remaining CPF
-    const cpfRemaining = Math.max(0, cpfTotal - cpfForSP - cpfForBSD);
-    const topAfterLoan = Math.max(0, topNeeds); // topNeeds already has loan subtracted
-    const cpfForTOP = Math.min(cpfRemaining, topAfterLoan);
+    // Step 1: S&P is always full cash
+    const cpfForSP = 0;
+
+    // Step 2: Allocate CPF to TOP optimally — leave exactly enough gap for DBL
+    // cpfForTOP = topNeeds - dblTotal (so DBL fills the rest perfectly)
+    // Capped at: available CPF, and topNeeds (can't exceed what's needed)
+    const cpfForTOP_ideal = Math.max(0, topNeeds - dblTotal);
+    const cpfForTOP = Math.min(cpfTotal, cpfForTOP_ideal);
+
+    // Step 3: Remaining CPF goes to BSD (saves some upfront cash)
+    const cpfRemaining = Math.max(0, cpfTotal - cpfForTOP);
+    const cpfForBSD = Math.min(cpfRemaining, bsd);
 
     // Cash at each stage
     const cashBooking = booking;
-    const cashSP  = sp  - cpfForSP;
-    const cashBSD = bsd - cpfForBSD;
+    const cashSP  = sp;                    // 100% cash at S&P
+    const cashBSD = bsd - cpfForBSD;       // remaining BSD after CPF
 
-    // At TOP: loan already deducted in topNeeds; fill with CPF then DBL then cash
+    // At TOP: CPF first, then DBL, then any remaining cash
     const topAfterCPF = Math.max(0, topNeeds - cpfForTOP);
     const dblUsed = Math.min(dblTotal, topAfterCPF);
     const cashTOP = Math.max(0, topAfterCPF - dblUsed);
@@ -987,12 +1136,12 @@ function calc() {
     const shortfall = Math.max(0, price + bsd - totalCash - totalCPF - totalLoan - dblUsed);
 
     stages = [
-      { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0 },
-      { stage: 'Exercise S&P', when: 'Within 9 weeks', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0 },
-      { stage: 'Buyer Stamp Duty', when: 'Within 14 days of S&P', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0 },
-      { stage: 'Construction', when: '~3 years', pct: '0%', total: 0, cash: 0, cpf: 0, loan: 0, dbl: 0, nil: true },
-      { stage: 'TOP — Keys', when: 'Year 3–4', pct: '65%', total: top, cash: cashTOP, cpf: cpfForTOP, loan: loanAtTOP, dbl: dblUsed },
-      { stage: 'CSC — Completion', when: '~12 months after TOP', pct: '15%', total: csc, cash: 0, cpf: 0, loan: loanAtCSC, dbl: 0 },
+      { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0, date: stageDates.otp },
+      { stage: 'Exercise S&P', when: 'Within 9 weeks', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0, date: stageDates.sp },
+      { stage: 'Buyer Stamp Duty', when: 'Within 14 days of S&P', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0, date: stageDates.bsd },
+      { stage: 'Construction', when: '~3 years', pct: '0%', total: 0, cash: 0, cpf: 0, loan: 0, dbl: 0, nil: true, date: null },
+      { stage: 'TOP — Keys', when: 'Year 3–4', pct: '65%', total: top, cash: cashTOP, cpf: cpfForTOP, loan: loanAtTOP, dbl: dblUsed, date: stageDates.top },
+      { stage: 'CSC — Completion', when: '~12 months after TOP', pct: '15%', total: csc, cash: 0, cpf: 0, loan: loanAtCSC, dbl: 0, date: stageDates.csc },
     ];
 
     renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd, {
@@ -1000,48 +1149,44 @@ function calc() {
     });
 
   } else {
-    // NPS: loan disburses progressively from foundation. Simplified as:
-    // 5% cash (booking), 15% cash+CPF (S&P), BSD, then progressive milestones
-    // Milestones during construction: ~55% total via loan
-    // TOP: remaining 25%, CSC: 15% — all loan
-    // We simplify construction progressive as 10 equal stages total = 55% via loan
-
-    const construction = Math.round(price * 0.55); // foundation onward (approx)
-    const loanForConstruction = Math.min(construction, loanTotal);
-    const loanRemaining = loanTotal - loanForConstruction;
+    // NPS: Official progressive payment schedule (per HDB/BCA stages)
+    // S&P 20% (5% booking + 15% exercise), then construction milestones via loan
+    // Foundation 10%, Framework 10%, Walls 5%, Ceiling 5%, Doors&Windows 5%, Carpark 5%
+    // TOP 25%, CSC 15%
 
     const cpfForBSD = Math.min(cpfTotal, bsd);
-    const cpfForSP = Math.min(cpfTotal - cpfForBSD, sp);
-    const cashSP = sp - cpfForSP;
-    const cashBSD = bsd - cpfForBSD;
+    const cpfForSP  = Math.min(cpfTotal - cpfForBSD, sp);
+    const cashSP    = sp - cpfForSP;
+    const cashBSD   = bsd - cpfForBSD;
     const cashBooking = booking;
 
     const totalLoan = loanTotal;
-    const totalCPF = cpfForBSD + cpfForSP;
+    const totalCPF  = cpfForBSD + cpfForSP;
     const totalCash = cashBooking + cashSP + cashBSD;
 
+    // Official NPS milestones with accurate timelines from S&P exercise
     const milestones = [
-      { name: 'Foundation', pct: '10%', amt: Math.round(price * 0.10) },
-      { name: 'Concrete Framework', pct: '10%', amt: Math.round(price * 0.10) },
-      { name: 'Brick Walls', pct: '5%', amt: Math.round(price * 0.05) },
-      { name: 'Ceiling / Roofing', pct: '5%', amt: Math.round(price * 0.05) },
-      { name: 'Doors & Windows', pct: '5%', amt: Math.round(price * 0.05) },
-      { name: 'Carpark / Drainage', pct: '5%', amt: Math.round(price * 0.05) },
-      { name: 'TOP', pct: '25%', amt: Math.round(price * 0.25) },
-      { name: 'CSC', pct: '15%', amt: Math.round(price * 0.15) },
+      { name: 'Foundation',         pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months from S&P' },
+      { name: 'Concrete Framework', pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months after Foundation' },
+      { name: 'Brick Walls',        pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Framework' },
+      { name: 'Ceiling / Roofing',  pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Walls' },
+      { name: 'Doors & Windows',    pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Ceiling' },
+      { name: 'Carpark / Drainage', pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after D&W' },
+      { name: 'TOP — Keys',         pct: '25%', amt: Math.round(price * 0.25), when: '9–12 months after Carpark' },
+      { name: 'CSC — Completion',   pct: '15%', amt: Math.round(price * 0.15), when: '12 months after TOP' },
     ];
 
     let loanLeft = loanTotal;
     stages = [
-      { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0 },
-      { stage: 'Exercise S&P', when: 'Within 9 weeks', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0 },
-      { stage: 'Buyer Stamp Duty', when: 'Within 14 days', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0 },
+      { stage: 'Booking / OTP',   when: 'Day 1 · Cash only',     pct: '5%',  total: booking, cash: booking, cpf: 0,       loan: 0, dbl: 0, date: stageDates.otp },
+      { stage: 'Exercise S&P',    when: 'Within 9 weeks of OTP', pct: '15%', total: sp,      cash: cashSP,  cpf: cpfForSP, loan: 0, dbl: 0, date: stageDates.sp  },
+      { stage: 'Buyer Stamp Duty',when: 'Within 14 days of S&P', pct: '—',   total: bsd,     cash: cashBSD, cpf: cpfForBSD,loan: 0, dbl: 0, date: stageDates.bsd },
     ];
 
     for (const m of milestones) {
       const l = Math.min(loanLeft, m.amt);
       loanLeft -= l;
-      stages.push({ stage: m.name, when: 'Progressive', pct: m.pct, total: m.amt, cash: 0, cpf: 0, loan: l, dbl: 0 });
+      stages.push({ stage: m.name, when: m.when, pct: m.pct, total: m.amt, cash: 0, cpf: 0, loan: l, dbl: 0 });
     }
 
     const shortfall = Math.max(0, price + bsd - totalCash - totalCPF - totalLoan);
@@ -1049,11 +1194,16 @@ function calc() {
       cashBooking, cashSP, cashBSD, cashTOP: 0, cpfForBSD, cpfForSP
     });
   }
+  window._calcInProgress = false;
 }
 
 function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd, breakdown) {
   const colClass = dblEnabled ? 'dps-cols' : 'nps-cols';
   const hasDbl = dblEnabled && dblUsed > 0;
+
+  // ── Upfront cash (before construction starts) ──
+  const upfrontCash = (breakdown.cashBooking || 0) + (breakdown.cashSP || 0) + (breakdown.cashBSD || 0);
+  const upfrontCPF  = (breakdown.cpfForSP   || 0) + (breakdown.cpfForBSD || 0);
 
   // Build header columns
   const dblCol = hasDbl ? `<span>DBL</span>` : '';
@@ -1061,11 +1211,16 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
 
   // Stage rows
   let rowsHTML = '';
-  for (const s of stages) {
+  for (let i = 0; i < stages.length; i++) {
+    const s = stages[i];
     if (s.nil) {
+      const nilDetailId = 'detail-nil-' + i;
+      const nilRowId = 'row-nil-' + i;
       rowsHTML += `
-        <div class="st-row ${colClass} nil-row">
-          <div class="st-stage">${s.stage}<span class="stage-when">${s.when}</span></div>
+        <div class="st-row ${colClass} nil-row" id="${nilRowId}" onclick="toggleRow('${nilRowId}','${nilDetailId}')">
+          <div class="st-stage">${s.stage}
+            <span class="stage-when">${s.when}</span>
+          </div>
           <div class="st-num">${s.pct}</div>
           <div class="st-num nil" colspan="5">No payment due</div>
           <div class="st-num nil">—</div>
@@ -1073,14 +1228,31 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
           <div class="st-num nil">—</div>
           ${hasDbl ? `<div class="st-num nil">—</div>` : ''}
           <div class="st-num nil">$0</div>
+        </div>
+        <div class="row-detail" id="${nilDetailId}">
+          <span style="color:var(--text-muted);font-size:12px;">🏗 Nothing to pay during construction — this is the DPS advantage.</span>
         </div>`;
       continue;
     }
     const total = s.cash + s.cpf + s.loan + s.dbl;
     const barSegs = buildBar(s.cash, s.cpf, s.loan, s.dbl, total);
+    const rowId = 'row-' + i;
+    const detailId = 'detail-' + i;
+
+    // Build detail cards — only for non-zero values
+    let detailCards = '';
+    if (s.cash > 0)  detailCards += `<div class="rd-card"><div class="rd-label">💵 Cash</div><div class="rd-value cash">$${Math.round(s.cash).toLocaleString('en-SG')}</div></div>`;
+    if (s.cpf  > 0)  detailCards += `<div class="rd-card"><div class="rd-label">🏦 CPF (OA)</div><div class="rd-value cpf">$${Math.round(s.cpf).toLocaleString('en-SG')}</div></div>`;
+    if (s.loan > 0)  detailCards += `<div class="rd-card"><div class="rd-label">🏛 Bank Loan</div><div class="rd-value loan">$${Math.round(s.loan).toLocaleString('en-SG')}</div></div>`;
+    if (s.dbl  > 0)  detailCards += `<div class="rd-card"><div class="rd-label">🔗 Bridging</div><div class="rd-value dbl">$${Math.round(s.dbl).toLocaleString('en-SG')}</div></div>`;
+    if (total  > 0)  detailCards += `<div class="rd-card" style="border-color:rgba(212,168,67,0.3);background:var(--gold-glow)"><div class="rd-label">✦ Total</div><div class="rd-value total">$${Math.round(total).toLocaleString('en-SG')}</div></div>`;
+    if (s.date)      detailCards += `<div class="rd-card" style="border-color:rgba(212,168,67,0.2)"><div class="rd-label">📅 Deadline</div><div class="rd-value" style="font-size:14px;color:var(--gold);font-family:Outfit,sans-serif">${s.date}</div></div>`;
+
     rowsHTML += `
-      <div class="st-row ${colClass}">
-        <div class="st-stage">${s.stage}<span class="stage-when">${s.when}</span>
+      <div class="st-row ${colClass}" id="${rowId}" onclick="toggleRow('${rowId}','${detailId}')">
+        <div class="st-stage">${s.stage}
+          <span class="stage-when">${s.when}</span>
+          ${s.date ? `<span class="stage-date">📅 ${s.date}</span>` : ''}
           ${total > 0 ? `<div class="mini-bar">${barSegs}</div>` : ''}
         </div>
         <div class="st-num">${s.pct}</div>
@@ -1090,6 +1262,9 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
         <div class="st-num loan">${fmtN(s.loan)}</div>
         ${hasDbl ? `<div class="st-num dbl">${fmtN(s.dbl)}</div>` : ''}
         <div class="st-num total">${fmtN(total)}</div>
+      </div>
+      <div class="row-detail" id="${detailId}">
+        <div class="row-detail-grid">${detailCards || '<span style="color:var(--text-muted);font-size:12px;">No payment due at this stage</span>'}</div>
       </div>`;
   }
 
@@ -1113,9 +1288,9 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
         <span class="ts-value loan">${fmtPlain(totalLoan)}</span>
       </div>
       <div class="ts-divider"></div>
-      <div class="ts-item">
-        <span class="ts-label" style="color:var(--gold);font-weight:700;">Grand Total</span>
-        <span class="ts-value" style="color:var(--gold);font-weight:700;">${fmtPlain(price + bsd)}</span>
+      <div class="ts-item" style="margin-top:4px;">
+        <span class="ts-label" style="color:var(--gold);font-weight:700;font-size:17px;letter-spacing:0.5px;">Grand Total</span>
+        <span class="ts-value" style="color:var(--gold);font-weight:800;font-size:30px;font-family:'Inter',sans-serif;letter-spacing:-0.5px;">${fmtPlain(price + bsd)}</span>
       </div>
     </div>`;
 
@@ -1216,9 +1391,34 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
       </div>
     </div>
 
+    <!-- Upfront Cash Callout -->
+    <div class="upfront-callout anim">
+      <div class="uc-label">⚡ Before Construction Starts</div>
+      <div class="uc-row">
+        <div class="uc-item">
+          <span class="uc-tag">OTP Booking</span>
+          <span class="uc-val cash">${fmtPlain(breakdown.cashBooking)}</span>
+        </div>
+        <div class="uc-divider">+</div>
+        <div class="uc-item">
+          <span class="uc-tag">Exercise S&P</span>
+          <span class="uc-val" style="color:${breakdown.cashSP > 0 ? 'var(--cash)' : 'var(--text-muted)'}">${fmtPlain(breakdown.cashSP) || '—'} cash${upfrontCPF > 0 ? ` + <span style="color:var(--cpf)">${fmtPlain(upfrontCPF)} CPF</span>` : ''}</span>
+        </div>
+        <div class="uc-divider">+</div>
+        <div class="uc-item">
+          <span class="uc-tag">Stamp Duty (BSD)</span>
+          <span class="uc-val cash">${fmtPlain(breakdown.cashBSD)}</span>
+        </div>
+      </div>
+      <div class="uc-total">
+        <span>Total Upfront Cash</span>
+        <span class="uc-total-val">${fmtPlain(upfrontCash)}</span>
+      </div>
+    </div>
+
     <!-- Stage Table -->
     <div class="stage-table anim">
-      <div class="st-header ${colClass}">
+      <div class="st-header ${colClass}" style="cursor:default;">
         <span>Stage</span>
         <span>%</span>
         <span>Amount</span>
@@ -1331,6 +1531,21 @@ function applyDBL() {
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
 
+// ── Tappable rows ──
+function toggleRow(rowId, detailId) {
+  const row = document.getElementById(rowId);
+  const detail = document.getElementById(detailId);
+  if (!row || !detail) return;
+  const isOpen = detail.classList.contains('visible');
+  // Close all others
+  document.querySelectorAll('.row-detail.visible').forEach(d => d.classList.remove('visible'));
+  document.querySelectorAll('.st-row.expanded').forEach(r => r.classList.remove('expanded'));
+  if (!isOpen) {
+    detail.classList.add('visible');
+    row.classList.add('expanded');
+  }
+}
+
 // ── Persistence via URL hash (works on iPhone iCloud, no server needed) ──
 function getStore() {
   try {
@@ -1436,6 +1651,37 @@ function calcDates() {
   // BSD 2 weeks after exercise
   const sp15DateB  = spDeadline;              // Exercise S&P at 9-week hard deadline
   const bsdDateB   = addDays(sp15DateB, 14); // BSD: 2 weeks after
+
+  // Store dates globally so stage rows can display them
+  // Use Scenario A dates (most common — within 9 weeks)
+  const fmtD = d => d.toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' });
+  stageDates = {
+    otp:   fmtD(otp),
+    sp:    fmtD(spExDateA),
+    bsd:   fmtD(bsdDateA),
+    top:   'Year 3–4 (est.)',
+    csc:   '~12 months after TOP',
+  };
+  // Re-render results table with dates injected — update date spans directly if already rendered
+  document.querySelectorAll('.stage-date').forEach(el => el.remove());
+  const stageMap = {
+    'Booking / OTP': stageDates.otp,
+    'Exercise S&P':  stageDates.sp,
+    'Buyer Stamp Duty': stageDates.bsd,
+    'TOP — Keys':    stageDates.top,
+    'CSC — Completion': stageDates.csc,
+  };
+  document.querySelectorAll('.st-stage').forEach(el => {
+    const stageName = el.childNodes[0].textContent.trim();
+    const date = stageMap[stageName];
+    if (date) {
+      const span = document.createElement('span');
+      span.className = 'stage-date';
+      span.textContent = '📅 ' + date;
+      el.appendChild(span);
+    }
+  });
+  if (document.getElementById('price').value && !window._calcInProgress) calc();
 
   // Get payment amounts from current calc
   const price = parseNum('price');
