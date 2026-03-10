@@ -2,190 +2,297 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EC Financial Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EC Financial Calculator · PropNex</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0D0D0F;
-  --surface: #141416;
-  --surface2: #1C1C20;
-  --surface3: #242428;
-  --border: rgba(255,255,255,0.07);
-  --border-bright: rgba(255,255,255,0.14);
-  --gold: #D4A843;
-  --gold-dim: rgba(212,168,67,0.15);
-  --gold-glow: rgba(212,168,67,0.08);
-  --cash: #E8756A;
-  --cash-dim: rgba(232,117,106,0.15);
-  --cpf: #5BB8A0;
-  --cpf-dim: rgba(91,184,160,0.15);
-  --loan: #6B9FD4;
-  --loan-dim: rgba(107,159,212,0.15);
-  --dbl: #E8A86A;
-  --dbl-dim: rgba(232,168,106,0.15);
-  --text: #F0EDE8;
-  --text-muted: #6B6B72;
-  --text-dim: #9A9AA5;
-  --red: #E85D75;
-  --green: #5BB88A;
-  --radius: 14px;
+  --bg: #0A0A0C;
+  --surface: #111114;
+  --surface2: #18181D;
+  --surface3: #1F1F26;
+  --border: rgba(255,255,255,0.06);
+  --border-bright: rgba(255,255,255,0.12);
+  --gold: #C9993A;
+  --gold-light: #E2B55A;
+  --gold-dim: rgba(201,153,58,0.12);
+  --gold-glow: rgba(201,153,58,0.06);
+  --cash: #E07A6E;
+  --cash-dim: rgba(224,122,110,0.12);
+  --cpf: #52A88A;
+  --cpf-dim: rgba(82,168,138,0.12);
+  --loan: #5B8DC4;
+  --loan-dim: rgba(91,141,196,0.12);
+  --dbl: #C48A45;
+  --dbl-dim: rgba(196,138,69,0.12);
+  --text: #EDEBE6;
+  --text-muted: #55555F;
+  --text-dim: #888896;
+  --red: #D95B6E;
+  --green: #52A872;
+  --radius: 16px;
+  --radius-sm: 10px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
-  font-family: 'Inter', sans-serif;
-  font-feature-settings: 'cv02','cv03','cv04','cv11'; /* Inter optical improvements */
+  font-family: 'Outfit', sans-serif;
   -webkit-font-smoothing: antialiased;
   color: var(--text);
   min-height: 100vh;
-  line-height: 1.5;
+  overscroll-behavior: none;
 }
 
-/* Subtle background pattern */
+/* Ambient bg */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(circle at 15% 15%, rgba(212,168,67,0.05) 0%, transparent 45%),
-                    radial-gradient(circle at 85% 85%, rgba(107,159,212,0.04) 0%, transparent 45%);
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 5%, rgba(201,153,58,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 90%, rgba(91,141,196,0.03) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
 
 .app {
-  max-width: 1080px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 48px 24px 80px;
+  padding: 24px 16px 80px;
   position: relative;
   z-index: 1;
 }
 
+@media (min-width: 640px) {
+  .app { padding: 36px 24px 80px; }
+}
+@media (min-width: 960px) {
+  .app { padding: 48px 32px 80px; }
+}
+
 /* ── Header ── */
-.header { margin-bottom: 44px; }
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.header-left {}
+
 .header-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: var(--gold-dim);
-  border: 1px solid rgba(212,168,67,0.25);
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-size: 11px;
-  font-weight: 600;
+  border: 1px solid rgba(201,153,58,0.2);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold);
-  margin-bottom: 16px;
-}
-.header h1 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(30px, 5vw, 48px);
-  font-weight: 400;
-  color: var(--text);
-  line-height: 1.1;
   margin-bottom: 10px;
 }
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 5vw, 36px);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+}
 .header h1 span { color: var(--gold); }
-.header p { font-size: 15px; color: var(--text-dim); font-weight: 300; }
-
-/* ── Layout ── */
-.layout {
-  display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 24px;
-  align-items: start;
-}
-@media (max-width: 860px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  .results-panel {
-    order: -1; /* Results appear ABOVE inputs on mobile */
-  }
+.header p {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 400;
+  margin-top: 5px;
+  line-height: 1.5;
 }
 
-/* ── Panel ── */
-.panel {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.btn-clear {
+  background: rgba(224,122,110,0.08);
+  border: 1px solid rgba(224,122,110,0.2);
+  border-radius: 100px;
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--cash);
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-clear:active { background: rgba(224,122,110,0.15); transform: scale(0.97); }
+
+/* ── MOBILE: Single column, inputs always on top ── */
+/* On mobile: inputs stack naturally. Results come AFTER inputs in DOM order */
+/* We use flex-direction:column so inputs appear first */
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* On desktop (>= 860px), put inputs left, results right */
+@media (min-width: 860px) {
+  .main-layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+}
+
+.inputs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* On mobile: inputs appear FIRST */
+  order: 1;
+}
+
+.results-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* On mobile: results appear SECOND (below inputs) */
+  order: 2;
+}
+
+@media (min-width: 860px) {
+  .inputs-col { order: 1; }
+  .results-col { order: 2; }
+}
+
+/* ── Cards / Panels ── */
+.card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
 }
 
-.panel-header {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid var(--border);
+.card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--border);
 }
-.panel-header .ph-icon {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
+
+.card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   background: var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
 }
-.panel-header h2 {
+
+.card-title {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
 }
-.panel-header p {
+.card-sub {
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 1px;
+  font-weight: 400;
 }
 
-.panel-body { padding: 20px 24px; }
+.card-body {
+  padding: 18px;
+}
 
 /* ── Scheme Toggle ── */
 .scheme-toggle {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 4px;
 }
+
 .scheme-btn {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
+  padding: 11px 10px;
+  border-radius: 9px;
+  border: none;
   background: transparent;
   color: var(--text-dim);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
+  line-height: 1.3;
 }
-.scheme-btn:hover { border-color: var(--border-bright); color: var(--text); }
+.scheme-btn .sb-label {
+  font-size: 13px;
+  font-weight: 700;
+  display: block;
+  letter-spacing: 0.3px;
+}
+.scheme-btn .sb-sub {
+  font-size: 10px;
+  display: block;
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
 .scheme-btn.active {
-  background: var(--gold-dim);
-  border-color: rgba(212,168,67,0.4);
-  color: var(--gold);
+  background: linear-gradient(135deg, rgba(201,153,58,0.2), rgba(201,153,58,0.08));
+  border: 1px solid rgba(201,153,58,0.3);
+  color: var(--gold-light);
+  box-shadow: 0 2px 8px rgba(201,153,58,0.1);
 }
-.scheme-btn .sb-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; display: block; }
-.scheme-btn .sb-sub { font-size: 10px; color: inherit; opacity: 0.7; margin-top: 2px; display: block; }
+.scheme-btn:active { transform: scale(0.97); }
 
 /* ── Input Group ── */
-.input-group { margin-bottom: 18px; }
+.input-group {
+  margin-bottom: 14px;
+}
+.input-group:last-child { margin-bottom: 0; }
+
 .input-label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
+  letter-spacing: 1.2px;
+  margin-bottom: 7px;
 }
-.input-label .lbl-hint {
+.lbl-hint {
   font-size: 10px;
   color: var(--text-muted);
   text-transform: none;
@@ -201,42 +308,55 @@ body::before {
 .input-prefix {
   position: absolute;
   left: 14px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-muted);
   pointer-events: none;
+  z-index: 1;
 }
-.input-wrap input {
+
+.input-wrap input,
+.input-wrap input[type="date"] {
   width: 100%;
   background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px 12px 28px;
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 14px 13px 28px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px; /* 16px prevents iOS zoom */
+  font-weight: 600;
   color: var(--text);
   outline: none;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
 }
+
+.input-wrap input[type="date"] {
+  padding-left: 14px;
+  color-scheme: dark;
+}
+
 .input-wrap input:focus {
   border-color: var(--gold);
   background: var(--surface3);
+  box-shadow: 0 0 0 3px rgba(201,153,58,0.08);
 }
-.input-wrap input::placeholder { color: var(--text-muted); }
+.input-wrap input::placeholder { color: var(--text-muted); font-weight: 400; }
 
-/* Toggle switch */
+/* ── Toggle ── */
 .toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0;
+  padding: 13px 0;
   border-top: 1px solid var(--border);
-  margin-top: 4px;
+  margin-top: 6px;
 }
+
 .toggle-info .ti-label {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
 }
 .toggle-info .ti-sub {
@@ -244,607 +364,823 @@ body::before {
   color: var(--text-muted);
   margin-top: 2px;
 }
+
 .toggle {
-  width: 44px; height: 24px;
+  width: 46px;
+  height: 26px;
   background: var(--surface3);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 13px;
   position: relative;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
   flex-shrink: 0;
 }
 .toggle.on {
-  background: var(--gold-dim);
-  border-color: rgba(212,168,67,0.4);
+  background: linear-gradient(135deg, var(--gold), var(--dbl));
+  border-color: transparent;
 }
 .toggle::after {
   content: '';
   position: absolute;
-  width: 18px; height: 18px;
-  background: var(--text-muted);
+  width: 20px;
+  height: 20px;
+  background: rgba(255,255,255,0.5);
   border-radius: 50%;
-  top: 2px; left: 2px;
-  transition: transform 0.2s, background 0.2s;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), background 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .toggle.on::after {
   transform: translateX(20px);
-  background: var(--gold);
+  background: white;
 }
 
-/* DBL inputs - shown when toggle on */
 .dbl-fields {
   display: none;
-  background: var(--surface2);
-  border: 1px solid rgba(232,168,106,0.2);
-  border-radius: 10px;
-  padding: 16px;
-  margin-top: 12px;
-  gap: 14px;
   flex-direction: column;
+  gap: 12px;
+  background: rgba(196,138,69,0.06);
+  border: 1px solid rgba(196,138,69,0.15);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-top: 10px;
 }
 .dbl-fields.visible { display: flex; }
 .dbl-fields .input-group { margin-bottom: 0; }
 
-/* Section divider */
-.section-divider {
+/* ── Divider ── */
+.divider {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 20px 0 16px;
+  margin: 16px 0 14px;
 }
-.section-divider span {
+.divider span {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
   white-space: nowrap;
 }
-.section-divider::before, .section-divider::after {
+.divider::before, .divider::after {
   content: '';
   flex: 1;
   height: 1px;
   background: var(--border);
 }
 
-/* ── Results Panel ── */
-.results-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* Summary strip */
-.summary-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-.sum-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 16px;
-  text-align: center;
-  transition: border-color 0.2s;
-}
-.sum-card:hover { border-color: var(--border-bright); }
-.sum-card .sc-tag {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  display: block;
-}
-.sum-card .sc-amt {
-  font-family: 'Inter', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text);
-  display: block;
-  line-height: 1;
-  letter-spacing: -0.5px;
-}
-.sum-card.c-cash { border-top: 2px solid var(--cash); }
-.sum-card.c-cash .sc-tag { color: var(--cash); }
-.sum-card.c-cpf { border-top: 2px solid var(--cpf); }
-.sum-card.c-cpf .sc-tag { color: var(--cpf); }
-.sum-card.c-loan { border-top: 2px solid var(--loan); }
-.sum-card.c-loan .sc-tag { color: var(--loan); }
-.sum-card.c-dbl { border-top: 2px solid var(--dbl); }
-.sum-card.c-dbl .sc-tag { color: var(--dbl); }
-
-/* Feasibility */
-.feasibility {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-.feas-left { display: flex; align-items: center; gap: 12px; }
-.feas-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-.feas-label { font-size: 14px; font-weight: 600; }
-.feas-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-.feas-shortfall {
-  font-family: 'DM Serif Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: right;
-}
-
-/* Stage table */
-.stage-table {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.st-header {
-  display: grid;
-  padding: 12px 20px;
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-.st-header.nps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
-.st-header.dps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
-
-.st-row {
-  display: grid;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border);
-  align-items: center;
-  transition: background 0.15s;
-  cursor: pointer;
-}
-.st-row:last-child { border-bottom: none; }
-.st-row:hover { background: var(--surface2); }
-.st-row.expanded { background: var(--surface2); }
-
-/* Expanded detail card under each row */
-.row-detail {
-  display: none;
-  padding: 12px 20px 16px 20px;
-  background: rgba(212,168,67,0.04);
-  border-bottom: 1px solid var(--border);
-  animation: fadeIn 0.2s ease;
-}
-.row-detail.visible { display: block; }
-.row-detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-}
-.rd-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
-}
-.rd-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-.rd-value {
-  font-family: 'DM Serif Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-}
-.rd-value.cash { color: var(--cash); }
-.rd-value.cpf  { color: var(--cpf);  }
-.rd-value.loan { color: var(--loan); }
-.rd-value.dbl  { color: var(--dbl);  }
-.rd-value.total{ color: var(--gold); }
-.rd-value.nil  { color: var(--text-muted); font-size: 14px; }
-.st-row-chevron {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-left: auto;
-  transition: transform 0.2s;
-  grid-column: -1;
-}
-.st-row.expanded .st-row-chevron { transform: rotate(180deg); }
-.st-row.nps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
-.st-row.dps-cols { grid-template-columns: 2fr 0.6fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr; }
-.st-row.nil-row { opacity: 0.5; }
-.st-row.total-row {
-  background: var(--gold-glow);
-  border-top: 1px solid rgba(212,168,67,0.2);
-  font-weight: 600;
-}
-
-.st-stage { font-size: 13px; font-weight: 500; color: var(--text); }
-.st-stage .stage-when { font-size: 10px; color: var(--text-muted); font-weight: 400; display: block; margin-top: 2px; }
-.st-stage .stage-date { font-size: 11px; color: var(--gold); font-weight: 600; display: block; margin-top: 3px; letter-spacing: 0.2px; }
-.st-num { font-size: 13px; font-weight: 500; color: var(--text); text-align: right; padding: 0 4px; }
-.st-num.cash { color: var(--cash); }
-.st-num.cpf { color: var(--cpf); }
-.st-num.loan { color: var(--loan); }
-.st-num.dbl { color: var(--dbl); }
-.st-num.total { color: var(--gold); font-weight: 700; font-size: 14px; }
-.st-num.nil { color: var(--text-muted); font-size: 12px; }
-.st-num.warn { color: var(--red); }
-
-/* Visual bar in stage */
-.mini-bar {
-  display: flex;
-  height: 4px;
-  border-radius: 2px;
-  overflow: hidden;
-  gap: 1px;
-  margin-top: 4px;
-}
-.mb-seg { height: 100%; border-radius: 1px; }
-
-/* Cash timeline */
-.cash-timeline {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-}
-.ct-title {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 20px;
-}
-.ct-phases { display: flex; flex-direction: column; gap: 12px; }
-.ct-phase {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.ct-phase .cp-when {
-  font-size: 11px;
-  color: var(--text-muted);
-  width: 100px;
-  flex-shrink: 0;
-}
-.ct-bar-wrap { flex: 1; }
-.ct-bar-track {
-  height: 8px;
-  background: var(--surface3);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 4px;
-}
-.ct-bar-fill {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--cash);
-  transition: width 0.5s ease;
-}
-.ct-bar-fill.cpf { background: var(--cpf); }
-.ct-bar-fill.mixed {
-  background: linear-gradient(90deg, var(--cash) 0%, var(--cpf) 100%);
-}
-.ct-amt { font-size: 13px; font-weight: 600; color: var(--text); }
-.ct-breakdown { font-size: 11px; color: var(--text-muted); }
-
-/* Warning boxes */
-.warning-box {
-  background: rgba(232,93,117,0.08);
-  border: 1px solid rgba(232,93,117,0.25);
-  border-radius: 10px;
-  padding: 14px 16px;
-  font-size: 13px;
-  color: #F08090;
-  display: none;
-}
-.warning-box.visible { display: block; }
-.warning-box strong { color: var(--red); }
-
+/* ── Info box ── */
 .info-box {
   background: var(--gold-glow);
-  border: 1px solid rgba(212,168,67,0.2);
-  border-radius: 10px;
-  padding: 14px 16px;
+  border: 1px solid rgba(201,153,58,0.15);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
   font-size: 12px;
   color: var(--text-dim);
   line-height: 1.6;
 }
 .info-box strong { color: var(--gold); }
 
-/* Upfront Cash Callout */
+/* ── Summary Strip ── */
+.summary-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (min-width: 520px) and (max-width: 859px) {
+  .summary-strip { grid-template-columns: repeat(4,1fr); }
+}
+@media (min-width: 860px) {
+  .summary-strip { grid-template-columns: repeat(4,1fr); }
+}
+
+.sum-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.sum-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 0;
+}
+.sum-card.c-cash::before { background: var(--cash); }
+.sum-card.c-cpf::before { background: var(--cpf); }
+.sum-card.c-loan::before { background: var(--loan); }
+.sum-card.c-dbl::before { background: var(--dbl); }
+
+.sc-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+.sum-card.c-cash .sc-tag { color: var(--cash); }
+.sum-card.c-cpf .sc-tag { color: var(--cpf); }
+.sum-card.c-loan .sc-tag { color: var(--loan); }
+.sum-card.c-dbl .sc-tag { color: var(--dbl); }
+
+.sc-amt {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+  display: block;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+@media (min-width: 640px) {
+  .sc-amt { font-size: 18px; }
+}
+
+/* ── Feasibility Bar ── */
+.feasibility {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.feas-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.feas-text { flex: 1; min-width: 120px; }
+.feas-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.feas-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+.feas-amounts {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.feas-stat {
+  text-align: right;
+}
+.feas-stat .fs-val {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  display: block;
+}
+.feas-stat .fs-lbl {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* ── Upfront callout ── */
 .upfront-callout {
-  background: linear-gradient(135deg, rgba(232,117,106,0.08), rgba(212,168,67,0.06));
-  border: 1px solid rgba(232,117,106,0.25);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  margin-bottom: 4px;
+  background: linear-gradient(135deg, rgba(224,122,110,0.06), rgba(201,153,58,0.04));
+  border: 1px solid rgba(224,122,110,0.18);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
 }
 .uc-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--cash);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
-.uc-row {
+.uc-items {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  gap: 6px;
+  align-items: flex-start;
   flex-wrap: wrap;
-  margin-bottom: 14px;
 }
 .uc-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
   flex: 1;
-  min-width: 90px;
+  min-width: 70px;
 }
 .uc-tag {
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
   color: var(--text-muted);
+  display: block;
+  margin-bottom: 3px;
 }
 .uc-val {
-  font-family: 'DM Serif Display', serif;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--cash);
+  display: block;
+  letter-spacing: -0.3px;
 }
-.uc-val.cash { color: var(--cash); }
-.uc-divider {
+.uc-val.neutral { color: var(--text-dim); }
+.uc-sep {
   font-size: 16px;
   color: var(--text-muted);
-  font-weight: 300;
+  padding-top: 16px;
   flex-shrink: 0;
-  padding-top: 14px;
+  font-weight: 300;
 }
-.uc-total {
+.uc-total-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 12px;
-  border-top: 1px solid rgba(232,117,106,0.2);
+  margin-top: 10px;
+  border-top: 1px solid rgba(224,122,110,0.15);
 }
-.uc-total span:first-child {
-  font-size: 12px;
+.uc-total-lbl {
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-dim);
 }
 .uc-total-val {
-  font-family: 'Inter', sans-serif;
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-size: 24px;
+  font-weight: 900;
   color: var(--cash);
+  letter-spacing: -0.5px;
 }
 
-/* Total Summary Row */
-.total-summary-row {
+/* ── Stage Table ── */
+.stage-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.st-header {
+  padding: 11px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: grid;
+  gap: 4px;
+}
+
+.st-row {
+  display: grid;
+  gap: 4px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.st-row:last-child { border-bottom: none; }
+.st-row:active, .st-row.expanded { background: var(--surface2); }
+
+/* Column definitions - desktop shows all columns */
+.st-row.nps-cols,
+.st-header.nps-cols { grid-template-columns: 1fr 36px 90px 90px 90px 90px 90px; }
+
+.st-row.dps-cols,
+.st-header.dps-cols { grid-template-columns: 1fr 36px 90px 90px 90px 90px 90px 90px; }
+
+/* Mobile: only Stage + % + Total columns in grid; breakdown shown as chips inside stage cell */
+@media (max-width: 639px) {
+  .st-row.nps-cols,
+  .st-header.nps-cols { grid-template-columns: 1fr 32px 80px; }
+  .st-row.dps-cols,
+  .st-header.dps-cols { grid-template-columns: 1fr 32px 80px; }
+  .st-col-hide { display: none !important; }
+}
+
+/* Breakdown chips shown inside stage cell on mobile */
+.stage-breakdown {
+  display: none;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+@media (max-width: 639px) {
+  .stage-breakdown { display: flex; }
+}
+.bd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.bd-chip.cash { background: var(--cash-dim); color: var(--cash); }
+.bd-chip.cpf  { background: var(--cpf-dim);  color: var(--cpf);  }
+.bd-chip.loan { background: var(--loan-dim); color: var(--loan); }
+.bd-chip.dbl  { background: var(--dbl-dim);  color: var(--dbl);  }
+.bd-chip .chip-lbl { font-size: 9px; font-weight: 600; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.st-stage {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+.stage-when {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 400;
+  display: block;
+  margin-top: 1px;
+}
+.stage-date {
+  font-size: 10px;
+  color: var(--gold);
+  font-weight: 600;
+  display: block;
+  margin-top: 2px;
+}
+
+.mini-bar {
+  display: flex;
+  height: 3px;
+  border-radius: 2px;
+  overflow: hidden;
+  gap: 1px;
+  margin-top: 5px;
+  max-width: 120px;
+}
+.mb-seg { height: 100%; border-radius: 1px; }
+
+.st-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+  padding: 0 2px;
+}
+.st-num.cash { color: var(--cash); }
+.st-num.cpf { color: var(--cpf); }
+.st-num.loan { color: var(--loan); }
+.st-num.dbl { color: var(--dbl); }
+.st-num.total { color: var(--gold); font-weight: 800; }
+.st-num.nil { color: var(--text-muted); font-size: 11px; }
+.st-num.muted { color: var(--text-muted); }
+
+.st-row.nil-row { opacity: 0.45; }
+.st-row.total-row {
   background: var(--gold-glow);
-  border-top: 1px solid rgba(212,168,67,0.25);
-  border-radius: 0 0 var(--radius) var(--radius);
-  padding: 16px 20px;
+  cursor: default;
+}
+
+/* Row detail */
+.row-detail {
+  display: none;
+  padding: 10px 16px 14px;
+  background: rgba(201,153,58,0.03);
+  border-bottom: 1px solid var(--border);
+  animation: fadeUp 0.2s ease both;
+}
+.row-detail.visible { display: block; }
+.rd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+.rd-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 11px;
+}
+.rd-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.rd-value {
+  font-size: 16px;
+  font-weight: 800;
+}
+.rd-value.cash { color: var(--cash); }
+.rd-value.cpf { color: var(--cpf); }
+.rd-value.loan { color: var(--loan); }
+.rd-value.dbl { color: var(--dbl); }
+.rd-value.total { color: var(--gold); }
+.rd-value.muted { color: var(--text-muted); font-size: 13px; }
+
+/* Total summary at bottom of table */
+.totals-section {
+  background: var(--gold-glow);
+  border-top: 1px solid rgba(201,153,58,0.15);
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
-
-.ts-item {
+.ts-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
 }
-
-.ts-label {
-  font-size: 15px;
-  font-weight: 600;
+.ts-lbl {
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text-dim);
+}
+.ts-val {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.ts-val.cash { color: var(--cash); }
+.ts-val.cpf { color: var(--cpf); }
+.ts-val.loan { color: var(--loan); }
+.ts-val.dbl { color: var(--dbl); }
+.ts-sep {
+  height: 1px;
+  background: rgba(201,153,58,0.15);
+  margin: 2px 0;
+}
+.ts-grand-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 4px;
+}
+.ts-grand-lbl {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold);
   letter-spacing: 0.3px;
 }
+.ts-grand-val {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: -1px;
+}
 
-.ts-value {
-  font-size: 22px;
+/* ── DBL Calculator ── */
+.dbl-calc-result { display: none; margin-top: 14px; }
+
+.dbl-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.dbl-line:last-child { border-bottom: none; }
+.dbl-line span:first-child {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.dbl-line span:last-child {
+  font-size: 13px;
   font-weight: 700;
-  font-family: 'Inter', sans-serif;
+}
+
+.dbl-result-box {
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,153,58,0.3);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+.dbl-max-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.dbl-max-val {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--gold);
   letter-spacing: -0.5px;
 }
 
-.ts-value.cash { color: var(--cash); }
-.ts-value.cpf  { color: var(--cpf);  }
-.ts-value.loan { color: var(--loan); }
-.ts-value.dbl  { color: var(--dbl);  }
+.btn-apply {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,153,58,0.25);
+  border-radius: var(--radius-sm);
+  color: var(--gold-light);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn-apply:active { background: rgba(201,153,58,0.2); transform: scale(0.98); }
 
-.ts-divider {
-  height: 1px;
-  background: rgba(212,168,67,0.2);
-  margin: 2px 0;
+/* ── Date Deadlines ── */
+.date-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.dp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dp-label { font-size: 12px; font-weight: 500; color: var(--text-dim); flex: 1; min-width: 0; }
+.dp-date { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.dp-days { font-size: 10px; color: var(--text-muted); margin-left: 4px; }
+
+/* ── Cash Timeline (DPS) ── */
+.cash-timeline-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.ct-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.ct-phase {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.ct-phase:last-child { margin-bottom: 0; }
+.cp-when {
+  font-size: 10px;
+  color: var(--text-muted);
+  width: 90px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+.ct-bar-wrap { flex: 1; }
+.ct-bar-track {
+  height: 6px;
+  background: var(--surface3);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+.ct-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--cash);
+  transition: width 0.5s ease;
+}
+.ct-amt { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.ct-desc { font-size: 10px; color: var(--text-muted); }
+
+/* ── Warning ── */
+.warning-box {
+  display: none;
+  background: rgba(217,91,110,0.08);
+  border: 1px solid rgba(217,91,110,0.25);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #F09090;
+  line-height: 1.6;
+}
+.warning-box.visible { display: block; }
+.warning-box strong { color: var(--red); }
+
+/* ── Booking Timeline (full width) ── */
+.timeline-section {
+  display: none;
+  margin-top: 20px;
 }
 
-/* Booking Timeline */
-.bk-timeline { position: relative; }
-.bk-canvas-wrap { position: relative; width: 100%; }
-.bk-canvas-wrap canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
 .bk-cards-row {
   display: flex;
+  gap: 8px;
   width: 100%;
-  position: relative;
-  z-index: 2;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+.bk-cards-row::-webkit-scrollbar { display: none; }
+
 .bk-col {
+  flex: 0 0 auto;
+  min-width: 110px;
+  max-width: 160px;
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 4px;
 }
 
 .bk-box {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 10px 11px;
   text-align: center;
-  width: 100%;
-  transition: border-color 0.2s, transform 0.2s;
-  cursor: default;
-}
-.bk-box:hover {
-  border-color: rgba(212,168,67,0.35);
-  transform: translateY(-2px);
+  transition: border-color 0.2s;
 }
 .bk-box.highlight {
-  border-color: rgba(212,168,67,0.4);
+  border-color: rgba(201,153,58,0.35);
   background: var(--gold-glow);
 }
-.bk-box .bk-title {
-  font-size: 12px;
+.bk-title {
+  font-size: 10px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 4px;
   line-height: 1.3;
-  letter-spacing: 0.1px;
 }
-.bk-box .bk-date {
-  font-family: 'DM Serif Display', serif;
-  font-size: 13px;
-  font-weight: 700;
+.bk-date {
+  font-family: 'Playfair Display', serif;
+  font-size: 11px;
   color: var(--gold);
-  margin-bottom: 3px;
+  font-weight: 600;
+  margin-bottom: 5px;
 }
-.bk-box .bk-amount {
-  font-size: 18px;
+.bk-amount {
+  font-size: 13px;
   font-weight: 800;
-  font-family: 'Inter', sans-serif;
-  margin-top: 8px;
-  padding: 5px 10px;
-  border-radius: 7px;
+  padding: 4px 8px;
+  border-radius: 6px;
   display: inline-block;
-  letter-spacing: -0.3px;
   width: 100%;
   text-align: center;
+  letter-spacing: -0.2px;
 }
-.bk-box .bk-amount.cash  { background: var(--cash-dim);              color: var(--cash); }
-.bk-box .bk-amount.cpf   { background: var(--cpf-dim);               color: var(--cpf);  }
-.bk-box .bk-amount.mixed { background: var(--gold-dim);              color: var(--gold); }
-.bk-box .bk-amount.free  { background: rgba(91,184,138,0.15);        color: var(--green); }
+.bk-amount.cash { background: var(--cash-dim); color: var(--cash); }
+.bk-amount.cpf { background: var(--cpf-dim); color: var(--cpf); }
+.bk-amount.mixed { background: var(--gold-dim); color: var(--gold); }
+.bk-amount.free { background: rgba(82,168,114,0.12); color: var(--green); }
 
-/* Bracket arrows below spine */
-.bk-brackets {
-  position: relative;
-  height: 60px;
-  margin-top: 24px;
+/* ── Scenario badge ── */
+.scenario-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
 }
-.bk-bracket {
+.scenario-badge.green {
+  background: rgba(82,168,114,0.1);
+  border: 1px solid rgba(82,168,114,0.25);
+  color: var(--green);
+}
+.scenario-badge.gold {
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,153,58,0.25);
+  color: var(--gold);
+}
+
+.scenario-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.scenario-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* Canvas for timeline arrows */
+.tl-canvas-wrap {
+  position: relative;
+  width: 100%;
+}
+.tl-canvas-wrap canvas {
   position: absolute;
   top: 0;
-  height: 28px;
-  border-bottom: 2px solid var(--cash);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  left: 0;
+  pointer-events: none;
 }
-.bk-bracket::before, .bk-bracket::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  width: 2px;
-  height: 10px;
-  background: var(--cash);
-}
-.bk-bracket::before { left: 0; }
-.bk-bracket::after { right: 0; }
-.bk-bracket-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--cash);
-  white-space: nowrap;
-  margin-bottom: -20px;
-}
-.bk-bracket.gold {
-  border-bottom-color: var(--gold);
-}
-.bk-bracket.gold::before, .bk-bracket.gold::after { background: var(--gold); }
-.bk-bracket.gold .bk-bracket-label { color: var(--gold); }
 
-/* Date pill */
-.date-pill {
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.anim { animation: fadeUp 0.35s ease both; }
+
+/* ── Footer ── */
+.footer {
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  transition: border-color 0.2s;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-.date-pill:hover { border-color: var(--border-bright); }
-.date-pill .dp-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
+.footer-text {
+  font-size: 11px;
+  color: var(--text-muted);
 }
-.date-pill .dp-label { font-size: 12px; font-weight: 500; color: var(--text-dim); flex: 1; }
-.date-pill .dp-date { font-size: 13px; font-weight: 600; color: var(--text); }
-.date-pill .dp-days { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
 
-/* Animations */
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.anim { animation: fadeIn 0.4s ease both; }
-
-/* Responsive */
-@media (max-width: 860px) {
-  .summary-strip { grid-template-columns: repeat(2,1fr); }
-  .st-header, .st-row { font-size: 11px; gap: 4px; }
-  .app { padding: 20px 16px; }
-  .panel-body { padding: 16px; }
-  .panel-header { padding: 14px 16px 12px; }
+/* ── Empty state ── */
+.empty-state {
+  background: var(--surface);
+  border: 1px dashed rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 40px 24px;
+  text-align: center;
 }
+.empty-icon { font-size: 32px; margin-bottom: 12px; }
+.empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.empty-sub { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Responsive table scrollable on mobile ── */
+.stage-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+}
+
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- HEADER -->
   <div class="header">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div class="header-badge">⬡ PropNex EC Tool</div>
-      <button onclick="clearAll()" style="background:rgba(232,117,106,0.1);border:1px solid rgba(232,117,106,0.25);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--cash);cursor:pointer;font-family:'Inter',sans-serif;">✕ Clear All</button>
+    <div class="header-left">
+      <div class="header-badge">EC Calculator</div>
+      <h1>EC Financial <span>Breakdown</span></h1>
+      <p>Cash · CPF · Loan breakdown by stage</p>
     </div>
-    <h1>EC Financial <span>Calculator</span></h1>
-    <p>Input your client's numbers to instantly see full cash, CPF and loan breakdown by stage</p>
+    <div class="header-actions">
+      <button class="btn-clear" onclick="clearAll()">✕ Clear</button>
+    </div>
   </div>
 
-  <div class="layout">
+  <!-- MAIN LAYOUT: inputs col + results col -->
+  <!-- On mobile, inputs-col (order:1) appears before results-col (order:2) -->
+  <div class="main-layout">
 
-    <!-- LEFT: Inputs -->
-    <div style="display:flex;flex-direction:column;gap:16px;">
+    <!-- INPUTS COLUMN -->
+    <div class="inputs-col">
 
-      <div class="panel">
-        <div class="panel-header">
-          <div class="ph-icon">🏠</div>
+      <!-- Purchase Details -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">🏠</div>
           <div>
-            <h2>Purchase Details</h2>
-            <p>Property & payment scheme</p>
+            <div class="card-title">Purchase Details</div>
+            <div class="card-sub">Property & payment scheme</div>
           </div>
         </div>
-        <div class="panel-body">
-
+        <div class="card-body">
           <div class="scheme-toggle">
             <button class="scheme-btn active" id="btn-nps" onclick="setScheme('nps')">
               <span class="sb-label">NPS</span>
@@ -855,50 +1191,47 @@ body::before {
               <span class="sb-sub">Deferred Payment</span>
             </button>
           </div>
-
           <div class="input-group">
             <div class="input-label">Purchase Price <span class="lbl-hint">New launch EC</span></div>
             <div class="input-wrap">
               <span class="input-prefix">$</span>
-              <input type="text" id="price" placeholder="e.g. 1,000,000" oninput="saveAndCalc()">
+              <input type="text" id="price" inputmode="numeric" placeholder="1,000,000" oninput="saveAndCalc()">
             </div>
           </div>
-
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-header">
-          <div class="ph-icon">💰</div>
+      <!-- Available Funds -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">💰</div>
           <div>
-            <h2>Available Funds</h2>
-            <p>Enter client's financial resources</p>
+            <div class="card-title">Available Funds</div>
+            <div class="card-sub">Client's financial resources</div>
           </div>
         </div>
-        <div class="panel-body">
-
+        <div class="card-body">
           <div class="input-group">
-            <div class="input-label">CPF (OA Balance) <span class="lbl-hint">Ordinary Account</span></div>
+            <div class="input-label">CPF OA Balance <span class="lbl-hint">Ordinary Account</span></div>
             <div class="input-wrap">
               <span class="input-prefix">$</span>
-              <input type="text" id="cpf" placeholder="e.g. 100,000" oninput="saveAndCalc()">
+              <input type="text" id="cpf" inputmode="numeric" placeholder="100,000" oninput="saveAndCalc()">
             </div>
           </div>
-
           <div class="input-group">
             <div class="input-label">Max Bank Loan <span class="lbl-hint">Based on MSR 30%</span></div>
             <div class="input-wrap">
               <span class="input-prefix">$</span>
-              <input type="text" id="loan" placeholder="e.g. 100,000" oninput="saveAndCalc()">
+              <input type="text" id="loan" inputmode="numeric" placeholder="750,000" oninput="saveAndCalc()">
             </div>
           </div>
 
-          <div class="section-divider"><span>Optional</span></div>
+          <div class="divider"><span>Optional</span></div>
 
           <div class="toggle-row">
             <div class="toggle-info">
               <div class="ti-label">Bridging Loan (DBL)</div>
-              <div class="ti-sub">For 2nd timers selling existing HDB</div>
+              <div class="ti-sub">2nd timers selling existing HDB</div>
             </div>
             <div class="toggle" id="dbl-toggle" onclick="toggleDBL()"></div>
           </div>
@@ -908,69 +1241,65 @@ body::before {
               <div class="input-label">DBL Available</div>
               <div class="input-wrap">
                 <span class="input-prefix">$</span>
-                <input type="text" id="dbl" placeholder="e.g. 100,000" oninput="saveAndCalc()">
+                <input type="text" id="dbl" inputmode="numeric" placeholder="200,000" oninput="saveAndCalc()">
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
+      <!-- Info -->
       <div class="info-box">
-        <strong>BSD is auto-calculated</strong> using IRAS bands and added to your payment schedule. CPF is strategically deployed at TOP to minimise cash outlay.
+        <strong>BSD auto-calculated</strong> using IRAS progressive bands. CPF deployed strategically to minimise upfront cash.
       </div>
 
-      <!-- DBL Calculator Panel -->
-      <div class="panel" id="dbl-calc-panel" style="display:none;">
-        <div class="panel-header">
-          <div class="ph-icon">🏦</div>
+      <!-- DBL Calculator -->
+      <div class="card" id="dbl-calc-panel" style="display:none;">
+        <div class="card-header">
+          <div class="card-icon">🏦</div>
           <div>
-            <h2>DBL Calculator</h2>
-            <p>Deferred Bridging Loan estimate</p>
+            <div class="card-title">DBL Estimator</div>
+            <div class="card-sub">Deferred bridging loan calculator</div>
           </div>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           <div class="input-group">
-            <div class="input-label">Current Indicative Valuation <span class="lbl-hint">Your Current HDB</span></div>
+            <div class="input-label">HDB Indicative Valuation</div>
             <div class="input-wrap">
               <span class="input-prefix">$</span>
-              <input type="text" id="dbl-valuation" placeholder="e.g. 500,000" oninput="calcDBL()">
+              <input type="text" id="dbl-valuation" inputmode="numeric" placeholder="500,000" oninput="calcDBL()">
             </div>
           </div>
           <div class="input-group">
-            <div class="input-label">Outstanding Loan <span class="lbl-hint">Remaining HDB loan</span></div>
+            <div class="input-label">Outstanding Loan</div>
             <div class="input-wrap">
               <span class="input-prefix">$</span>
-              <input type="text" id="dbl-outstanding" placeholder="e.g. 100,000" oninput="calcDBL()">
+              <input type="text" id="dbl-outstanding" inputmode="numeric" placeholder="100,000" oninput="calcDBL()">
             </div>
           </div>
 
-          <!-- DBL Result -->
-          <div id="dbl-calc-result" style="display:none; margin-top:16px;">
-            <div class="section-divider"><span>Breakdown</span></div>
-            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="dbl-calc-lines"></div>
-            <div style="background:var(--gold-dim);border:1px solid rgba(212,168,67,0.35);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);">Max DBL</span>
-              <span id="dbl-calc-max" style="font-family:'Inter',sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.5px;color:var(--gold);"></span>
+          <div class="dbl-calc-result" id="dbl-calc-result">
+            <div class="divider"><span>Breakdown</span></div>
+            <div id="dbl-calc-lines"></div>
+            <div class="dbl-result-box">
+              <div class="dbl-max-lbl">Max DBL</div>
+              <div class="dbl-max-val" id="dbl-calc-max"></div>
             </div>
-            <button onclick="applyDBL()" style="width:100%;margin-top:10px;padding:11px;background:var(--gold-dim);border:1px solid rgba(212,168,67,0.35);border-radius:10px;color:var(--gold);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;"
-              onmouseover="this.style.background='rgba(212,168,67,0.25)'" onmouseout="this.style.background='var(--gold-dim)'">
-              ↑ Apply this amount to DBL field above
-            </button>
+            <button class="btn-apply" onclick="applyDBL()">↑ Apply to DBL Field</button>
           </div>
         </div>
       </div>
 
-      <!-- Booking Date Panel -->
-      <div class="panel">
-        <div class="panel-header">
-          <div class="ph-icon">📅</div>
+      <!-- Booking Date — moved to bottom -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">📅</div>
           <div>
-            <h2>Booking Timeline</h2>
-            <p>Enter OTP date to generate key deadlines</p>
+            <div class="card-title">Booking Timeline</div>
+            <div class="card-sub">OTP date → key deadlines</div>
           </div>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           <div class="input-group">
             <div class="input-label">OTP Booking Date</div>
             <div class="input-wrap">
@@ -978,50 +1307,68 @@ body::before {
             </div>
           </div>
           <div id="date-results" style="display:none;">
-            <div class="section-divider"><span>Key Deadlines</span></div>
-            <div id="date-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+            <div class="divider"><span>Key Deadlines</span></div>
+            <div id="date-list" style="display:flex;flex-direction:column;gap:8px;"></div>
           </div>
         </div>
       </div>
 
     </div>
+    <!-- END INPUTS COLUMN -->
 
-    <!-- RIGHT: Results -->
-    <div class="results-panel" id="results">
-      <!-- Populated by JS -->
+    <!-- RESULTS COLUMN -->
+    <div class="results-col" id="results-col">
+
+      <!-- Empty state shown when no price entered -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">Enter purchase details</div>
+        <div class="empty-sub">Fill in the price and funds on the left to see a full payment breakdown by stage.</div>
+      </div>
+
+      <!-- Results injected by JS -->
+      <div id="results"></div>
+
     </div>
+    <!-- END RESULTS COLUMN -->
 
   </div>
 
-  <!-- Full-width Booking Timeline -->
-  <div id="booking-timeline-wrap" style="display:none; margin-top:32px;">
-    <div class="panel" style="overflow:visible;">
-      <div class="panel-header">
-        <div class="ph-icon">🗓</div>
+  <!-- Booking Timeline — full width below grid -->
+  <div id="booking-timeline-wrap" class="timeline-section">
+    <div class="card" style="overflow:visible;">
+      <div class="card-header">
+        <div class="card-icon">🗓</div>
         <div>
-          <h2 id="timeline-heading">EC Booking Timeline</h2>
-          <p id="timeline-scenario-label">Key dates and payment sequence</p>
+          <div class="card-title">EC Booking Timeline</div>
+          <div class="card-sub">Key dates and payment sequence</div>
         </div>
       </div>
-      <div class="panel-body" style="padding:28px 32px 36px;">
+      <div class="card-body" style="padding:20px 20px 28px;">
         <div id="booking-timeline-inner"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">Eric Lin · PropNex Realty · 9773 5195</div>
+    <div class="footer-text">© 2025 All rights reserved</div>
   </div>
 
 </div>
 
 <script>
 let scheme = 'nps';
-let stageDates = {}; // populated by calcDates, used by renderResults
+let stageDates = {};
 let dblEnabled = false;
 
 function setScheme(s) {
   scheme = s;
   document.getElementById('btn-dps').classList.toggle('active', s === 'dps');
   document.getElementById('btn-nps').classList.toggle('active', s === 'nps');
-  const _d = getStore(); _d.scheme = s; setStore(_d);
-  if (document.getElementById('price').value) calc();
+  const d = getStore(); d.scheme = s; setStore(d);
+  if (parseNum('price')) calc();
 }
 
 function toggleDBL() {
@@ -1029,112 +1376,71 @@ function toggleDBL() {
   document.getElementById('dbl-toggle').classList.toggle('on', dblEnabled);
   document.getElementById('dbl-fields').classList.toggle('visible', dblEnabled);
   document.getElementById('dbl-calc-panel').style.display = dblEnabled ? 'block' : 'none';
-  const _d2 = getStore(); _d2.dbl_on = dblEnabled ? '1' : '0'; setStore(_d2);
-  if (document.getElementById('price').value) calc();
+  const d = getStore(); d.dbl_on = dblEnabled ? '1' : '0'; setStore(d);
+  if (parseNum('price')) calc();
 }
 
 function parseNum(id) {
-  const val = document.getElementById(id).value.replace(/[^0-9.]/g, '');
-  return parseFloat(val) || 0;
+  const v = document.getElementById(id).value.replace(/[^0-9.]/g, '');
+  return parseFloat(v) || 0;
 }
 
-function fmt(n, decimals=0) {
-  if (n === 0) return '—';
-  return '$' + n.toLocaleString('en-SG', {minimumFractionDigits: decimals, maximumFractionDigits: decimals});
-}
-
-function fmtPlain(n) {
-  if (n === 0) return '—';
+function fmt(n) {
+  if (!n || n === 0) return '—';
   return '$' + Math.round(n).toLocaleString('en-SG');
 }
 
 function calcBSD(price) {
-  // IRAS BSD rates effective on or after 15 Feb 2023 (residential)
-  // Rounded down to nearest dollar, minimum $1
   let bsd = 0;
   const bands = [
-    [180000,   0.01],
-    [180000,   0.02],
-    [640000,   0.03],
-    [500000,   0.04],
-    [1500000,  0.05],
-    [Infinity, 0.06]
+    [180000, 0.01], [180000, 0.02], [640000, 0.03],
+    [500000, 0.04], [1500000, 0.05], [Infinity, 0.06]
   ];
-  let remaining = price;
-  for (const [band, rate] of bands) {
-    const taxable = Math.min(remaining, band);
-    bsd += taxable * rate;
-    remaining -= taxable;
-    if (remaining <= 0) break;
+  let rem = price;
+  for (const [b, r] of bands) {
+    const t = Math.min(rem, b);
+    bsd += t * r;
+    rem -= t;
+    if (rem <= 0) break;
   }
   return Math.max(1, Math.floor(bsd));
 }
 
 function calc() {
-  window._calcInProgress = true;
   const price = parseNum('price');
   const cpfTotal = parseNum('cpf');
   const loanTotal = parseNum('loan');
   const dblTotal = dblEnabled ? parseNum('dbl') : 0;
 
-  if (price === 0) return;
+  document.getElementById('empty-state').style.display = price === 0 ? 'block' : 'none';
+  if (price === 0) { document.getElementById('results').innerHTML = ''; return; }
 
   const bsd = calcBSD(price);
-
-  // Payment stages
-  const booking = Math.round(price * 0.05);   // 5% cash
-  const sp = Math.round(price * 0.15);         // 15%
-  const top = Math.round(price * 0.65);        // 65%
-  const csc = Math.round(price * 0.15);        // 15%
-
-  // ── LOGIC: MAS order = Cash first, CPF second, Loan last
-  // Count from the back: Loan fills last, CPF fills next, Cash covers remainder
-  // For DPS: loan disburses in 2 tranches: TOP gets loan portion, CSC gets rest
+  const booking = Math.round(price * 0.05);
+  const sp = Math.round(price * 0.15);
+  const top = Math.round(price * 0.65);
+  const csc = Math.round(price * 0.15);
 
   let stages = [];
 
   if (scheme === 'dps') {
-    // Loan splits: CSC = min(csc, loanTotal); rest of loan at TOP
     const loanAtCSC = Math.min(csc, loanTotal);
     const loanAtTOP = loanTotal - loanAtCSC;
-
-    // At TOP: need to fill (top - loanAtTOP) with CPF + DBL + Cash
     const topNeeds = top - loanAtTOP;
 
-    // DPS CPF strategy (MAS order: Cash → CPF → Loan):
-    // Goal: minimise total cash by deploying CPF optimally across stages.
-    // CPF CAN be used at S&P, BSD, and TOP — no restriction on which stage.
-    //
-    // Optimal allocation:
-    //   1. Reserve CPF for TOP first: cpfForTOP = topNeeds - dblTotal
-    //      (so DBL fills the gap perfectly, leaving zero cash at TOP)
-    //   2. Remaining CPF → BSD first (smaller amount, clears it early)
-    //   3. Any further remaining CPF → S&P (reduces upfront cash)
-    //
-    // This order minimises total cash across all stages.
-
-    // Step 1: How much CPF is needed at TOP to let DBL cover the rest perfectly?
     const cpfForTOP_ideal = Math.max(0, topNeeds - dblTotal);
     const cpfForTOP = Math.min(cpfTotal, cpfForTOP_ideal);
-
-    // Step 2: Remaining CPF after TOP allocation → BSD first
     const cpfAfterTOP = Math.max(0, cpfTotal - cpfForTOP);
     const cpfForBSD = Math.min(cpfAfterTOP, bsd);
-
-    // Step 3: Any CPF still remaining → S&P
     const cpfAfterBSD = Math.max(0, cpfAfterTOP - cpfForBSD);
     const cpfForSP = Math.min(cpfAfterBSD, sp);
 
-    // Cash at each stage (MAS: Cash = Amount - CPF - Loan)
     const cashBooking = booking;
-    const cashSP  = sp  - cpfForSP;
+    const cashSP = sp - cpfForSP;
     const cashBSD = bsd - cpfForBSD;
-
-    // At TOP: CPF first, then DBL, then remaining cash
     const topAfterCPF = Math.max(0, topNeeds - cpfForTOP);
     const dblUsed = Math.min(dblTotal, topAfterCPF);
     const cashTOP = Math.max(0, topAfterCPF - dblUsed);
-
     const totalCash = cashBooking + cashSP + cashBSD + cashTOP;
     const totalCPF = cpfForBSD + cpfForSP + cpfForTOP;
     const totalLoan = loanAtTOP + loanAtCSC;
@@ -1143,51 +1449,43 @@ function calc() {
     stages = [
       { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0, date: stageDates.otp },
       { stage: 'Exercise S&P', when: 'Within 9 weeks', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0, date: stageDates.sp },
-      { stage: 'Buyer Stamp Duty', when: 'Within 14 days of S&P', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0, date: stageDates.bsd },
-      { stage: 'Construction', when: '~3 years', pct: '0%', total: 0, cash: 0, cpf: 0, loan: 0, dbl: 0, nil: true, date: null },
+      { stage: 'Buyer Stamp Duty', when: '14 days from S&P', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0, date: stageDates.bsd },
+      { stage: 'Construction', when: '~3 years · DPS', pct: '0%', total: 0, cash: 0, cpf: 0, loan: 0, dbl: 0, nil: true },
       { stage: 'TOP — Keys', when: 'Year 3–4', pct: '65%', total: top, cash: cashTOP, cpf: cpfForTOP, loan: loanAtTOP, dbl: dblUsed, date: stageDates.top },
       { stage: 'CSC — Completion', when: '~12 months after TOP', pct: '15%', total: csc, cash: 0, cpf: 0, loan: loanAtCSC, dbl: 0, date: stageDates.csc },
     ];
 
-    renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd, {
-      cashBooking, cashSP, cashBSD, cashTOP, cpfForBSD, cpfForSP
-    });
+    renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd,
+      { cashBooking, cashSP, cashBSD, cashTOP, cpfForBSD, cpfForSP, cpfForTOP });
 
   } else {
-    // NPS: Official progressive payment schedule (per HDB/BCA stages)
-    // S&P 20% (5% booking + 15% exercise), then construction milestones via loan
-    // Foundation 10%, Framework 10%, Walls 5%, Ceiling 5%, Doors&Windows 5%, Carpark 5%
-    // TOP 25%, CSC 15%
-
     const cpfForBSD = Math.min(cpfTotal, bsd);
-    const cpfForSP  = Math.min(cpfTotal - cpfForBSD, sp);
-    const cashSP    = sp - cpfForSP;
-    const cashBSD   = bsd - cpfForBSD;
+    const cpfForSP = Math.min(cpfTotal - cpfForBSD, sp);
+    const cashSP = sp - cpfForSP;
+    const cashBSD = bsd - cpfForBSD;
     const cashBooking = booking;
-
     const totalLoan = loanTotal;
-    const totalCPF  = cpfForBSD + cpfForSP;
+    const totalCPF = cpfForBSD + cpfForSP;
     const totalCash = cashBooking + cashSP + cashBSD;
 
-    // Official NPS milestones with accurate timelines from S&P exercise
     const milestones = [
-      { name: 'Foundation',         pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months from S&P' },
+      { name: 'Foundation', pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months from S&P' },
       { name: 'Concrete Framework', pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months after Foundation' },
-      { name: 'Brick Walls',        pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Framework' },
-      { name: 'Ceiling / Roofing',  pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Walls' },
-      { name: 'Doors & Windows',    pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Ceiling' },
-      { name: 'Carpark / Drainage', pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after D&W' },
-      { name: 'TOP — Keys',         pct: '25%', amt: Math.round(price * 0.25), when: '9–12 months after Carpark' },
-      { name: 'CSC — Completion',   pct: '15%', amt: Math.round(price * 0.15), when: '12 months after TOP' },
+      { name: 'Brick Walls', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after Framework' },
+      { name: 'Ceiling / Roofing', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after Walls' },
+      { name: 'Doors & Windows', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after Ceiling' },
+      { name: 'Carpark / Drainage', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after D&W' },
+      { name: 'TOP — Keys', pct: '25%', amt: Math.round(price * 0.25), when: '9–12 months after Carpark' },
+      { name: 'CSC — Completion', pct: '15%', amt: Math.round(price * 0.15), when: '12 months after TOP' },
+    ];
+
+    stages = [
+      { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0, date: stageDates.otp },
+      { stage: 'Exercise S&P', when: 'Within 9 weeks of OTP', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0, date: stageDates.sp },
+      { stage: 'Buyer Stamp Duty', when: '14 days from S&P', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0, date: stageDates.bsd },
     ];
 
     let loanLeft = loanTotal;
-    stages = [
-      { stage: 'Booking / OTP',   when: 'Day 1 · Cash only',     pct: '5%',  total: booking, cash: booking, cpf: 0,       loan: 0, dbl: 0, date: stageDates.otp },
-      { stage: 'Exercise S&P',    when: 'Within 9 weeks of OTP', pct: '15%', total: sp,      cash: cashSP,  cpf: cpfForSP, loan: 0, dbl: 0, date: stageDates.sp  },
-      { stage: 'Buyer Stamp Duty',when: 'Within 14 days of S&P', pct: '—',   total: bsd,     cash: cashBSD, cpf: cpfForBSD,loan: 0, dbl: 0, date: stageDates.bsd },
-    ];
-
     for (const m of milestones) {
       const l = Math.min(loanLeft, m.amt);
       loanLeft -= l;
@@ -1195,63 +1493,60 @@ function calc() {
     }
 
     const shortfall = Math.max(0, price + bsd - totalCash - totalCPF - totalLoan);
-    renderResults(stages, totalCash, totalCPF, totalLoan, 0, 0, shortfall, price, bsd, {
-      cashBooking, cashSP, cashBSD, cashTOP: 0, cpfForBSD, cpfForSP
-    });
+    renderResults(stages, totalCash, totalCPF, totalLoan, 0, 0, shortfall, price, bsd,
+      { cashBooking, cashSP, cashBSD, cashTOP: 0, cpfForBSD, cpfForSP, cpfForTOP: 0 });
   }
-  window._calcInProgress = false;
 }
 
-function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd, breakdown) {
-  const colClass = dblEnabled ? 'dps-cols' : 'nps-cols';
+function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd, bd) {
   const hasDbl = dblEnabled && dblUsed > 0;
+  const colClass = hasDbl ? 'dps-cols' : 'nps-cols';
+  const upfrontCash = bd.cashBooking + bd.cashSP + bd.cashBSD;
+  const upfrontCPF = bd.cpfForSP + bd.cpfForBSD;
+  const ok = shortfall === 0;
+  const dblBuffer = dblEnabled ? Math.max(0, dblTotal - dblUsed) : 0;
 
-  // ── Upfront cash (before construction starts) ──
-  const upfrontCash = (breakdown.cashBooking || 0) + (breakdown.cashSP || 0) + (breakdown.cashBSD || 0);
-  const upfrontCPF  = (breakdown.cpfForSP   || 0) + (breakdown.cpfForBSD || 0);
-
-  // Build header columns
-  const dblCol = hasDbl ? `<span>DBL</span>` : '';
-  const dblColH = hasDbl ? `<span>DBL</span>` : '';
-
-  // Stage rows
+  // Stage rows HTML
   let rowsHTML = '';
   for (let i = 0; i < stages.length; i++) {
     const s = stages[i];
+    const rowId = 'row-' + i, detailId = 'detail-' + i;
+
     if (s.nil) {
-      const nilDetailId = 'detail-nil-' + i;
-      const nilRowId = 'row-nil-' + i;
       rowsHTML += `
-        <div class="st-row ${colClass} nil-row" id="${nilRowId}" onclick="toggleRow('${nilRowId}','${nilDetailId}')">
-          <div class="st-stage">${s.stage}
-            <span class="stage-when">${s.when}</span>
-          </div>
-          <div class="st-num">${s.pct}</div>
-          <div class="st-num nil" colspan="5">No payment due</div>
-          <div class="st-num nil">—</div>
-          <div class="st-num nil">—</div>
-          <div class="st-num nil">—</div>
-          ${hasDbl ? `<div class="st-num nil">—</div>` : ''}
-          <div class="st-num nil">$0</div>
+        <div class="st-row ${colClass} nil-row" id="${rowId}" onclick="toggleRow('${rowId}','${detailId}')">
+          <div class="st-stage">${s.stage}<span class="stage-when">${s.when}</span></div>
+          <div class="st-num muted">${s.pct}</div>
+          <div class="st-num nil st-col-hide">—</div>
+          <div class="st-num nil st-col-hide">—</div>
+          <div class="st-num nil st-col-hide">—</div>
+          <div class="st-num nil st-col-hide">—</div>
+          ${hasDbl ? `<div class="st-num nil st-col-hide">—</div>` : ''}
+          <div class="st-num muted">$0</div>
         </div>
-        <div class="row-detail" id="${nilDetailId}">
-          <span style="color:var(--text-muted);font-size:12px;">🏗 Nothing to pay during construction — this is the DPS advantage.</span>
+        <div class="row-detail" id="${detailId}">
+          <span style="color:var(--text-muted);font-size:12px;">🏗 No payment during construction — this is the DPS advantage.</span>
         </div>`;
       continue;
     }
+
     const total = s.cash + s.cpf + s.loan + s.dbl;
     const barSegs = buildBar(s.cash, s.cpf, s.loan, s.dbl, total);
-    const rowId = 'row-' + i;
-    const detailId = 'detail-' + i;
 
-    // Build detail cards — only for non-zero values
-    let detailCards = '';
-    if (s.cash > 0)  detailCards += `<div class="rd-card"><div class="rd-label">💵 Cash</div><div class="rd-value cash">$${Math.round(s.cash).toLocaleString('en-SG')}</div></div>`;
-    if (s.cpf  > 0)  detailCards += `<div class="rd-card"><div class="rd-label">🏦 CPF (OA)</div><div class="rd-value cpf">$${Math.round(s.cpf).toLocaleString('en-SG')}</div></div>`;
-    if (s.loan > 0)  detailCards += `<div class="rd-card"><div class="rd-label">🏛 Bank Loan</div><div class="rd-value loan">$${Math.round(s.loan).toLocaleString('en-SG')}</div></div>`;
-    if (s.dbl  > 0)  detailCards += `<div class="rd-card"><div class="rd-label">🔗 Bridging</div><div class="rd-value dbl">$${Math.round(s.dbl).toLocaleString('en-SG')}</div></div>`;
-    if (total  > 0)  detailCards += `<div class="rd-card" style="border-color:rgba(212,168,67,0.3);background:var(--gold-glow)"><div class="rd-label">✦ Total</div><div class="rd-value total">$${Math.round(total).toLocaleString('en-SG')}</div></div>`;
-    if (s.date)      detailCards += `<div class="rd-card" style="border-color:rgba(212,168,67,0.2)"><div class="rd-label">📅 Deadline</div><div class="rd-value" style="font-size:14px;color:var(--gold);font-family:Outfit,sans-serif">${s.date}</div></div>`;
+    let cards = '';
+    if (s.cash > 0) cards += `<div class="rd-card"><div class="rd-label">Cash</div><div class="rd-value cash">${fmt(s.cash)}</div></div>`;
+    if (s.cpf > 0) cards += `<div class="rd-card"><div class="rd-label">CPF (OA)</div><div class="rd-value cpf">${fmt(s.cpf)}</div></div>`;
+    if (s.loan > 0) cards += `<div class="rd-card"><div class="rd-label">Bank Loan</div><div class="rd-value loan">${fmt(s.loan)}</div></div>`;
+    if (s.dbl > 0) cards += `<div class="rd-card"><div class="rd-label">Bridging</div><div class="rd-value dbl">${fmt(s.dbl)}</div></div>`;
+    if (total > 0) cards += `<div class="rd-card" style="border-color:rgba(201,153,58,0.25);background:var(--gold-glow)"><div class="rd-label">Total Due</div><div class="rd-value total">${fmt(total)}</div></div>`;
+    if (s.date) cards += `<div class="rd-card" style="border-color:rgba(201,153,58,0.2)"><div class="rd-label">Deadline</div><div class="rd-value" style="font-size:13px;color:var(--gold);font-weight:700;">${s.date}</div></div>`;
+
+    // Build inline chips for mobile breakdown
+    let chips = '';
+    if (s.cash > 0) chips += `<span class="bd-chip cash"><span class="chip-lbl">Cash</span>${fmtPlain(s.cash)}</span>`;
+    if (s.cpf > 0)  chips += `<span class="bd-chip cpf"><span class="chip-lbl">CPF</span>${fmtPlain(s.cpf)}</span>`;
+    if (s.loan > 0) chips += `<span class="bd-chip loan"><span class="chip-lbl">Loan</span>${fmtPlain(s.loan)}</span>`;
+    if (s.dbl > 0)  chips += `<span class="bd-chip dbl"><span class="chip-lbl">DBL</span>${fmtPlain(s.dbl)}</span>`;
 
     rowsHTML += `
       <div class="st-row ${colClass}" id="${rowId}" onclick="toggleRow('${rowId}','${detailId}')">
@@ -1259,373 +1554,294 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
           <span class="stage-when">${s.when}</span>
           ${s.date ? `<span class="stage-date">📅 ${s.date}</span>` : ''}
           ${total > 0 ? `<div class="mini-bar">${barSegs}</div>` : ''}
+          ${chips ? `<div class="stage-breakdown">${chips}</div>` : ''}
         </div>
-        <div class="st-num">${s.pct}</div>
-        <div class="st-num">${fmtN(s.total)}</div>
-        <div class="st-num cash">${fmtN(s.cash)}</div>
-        <div class="st-num cpf">${fmtN(s.cpf)}</div>
-        <div class="st-num loan">${fmtN(s.loan)}</div>
-        ${hasDbl ? `<div class="st-num dbl">${fmtN(s.dbl)}</div>` : ''}
+        <div class="st-num muted">${s.pct}</div>
+        <div class="st-num st-col-hide">${fmtN(s.total)}</div>
+        <div class="st-num cash st-col-hide">${fmtN(s.cash)}</div>
+        <div class="st-num cpf st-col-hide">${fmtN(s.cpf)}</div>
+        <div class="st-num loan st-col-hide">${fmtN(s.loan)}</div>
+        ${hasDbl ? `<div class="st-num dbl st-col-hide">${fmtN(s.dbl)}</div>` : ''}
         <div class="st-num total">${fmtN(total)}</div>
       </div>
       <div class="row-detail" id="${detailId}">
-        <div class="row-detail-grid">${detailCards || '<span style="color:var(--text-muted);font-size:12px;">No payment due at this stage</span>'}</div>
+        <div class="rd-grid">${cards || '<span style="color:var(--text-muted);font-size:12px;">No payment at this stage</span>'}</div>
       </div>`;
   }
 
-  // Totals row — clean stacked summary, no clutter
-  rowsHTML += `
-    <div class="total-summary-row">
-      <div class="ts-item">
-        <span class="ts-label">Total Cash</span>
-        <span class="ts-value cash">${fmtPlain(totalCash)}</span>
-      </div>
-      <div class="ts-item">
-        <span class="ts-label">Total CPF</span>
-        <span class="ts-value cpf">${fmtPlain(totalCPF)}</span>
-      </div>
-      ${hasDbl ? `<div class="ts-item">
-        <span class="ts-label">Total Bridging Loan</span>
-        <span class="ts-value dbl">${fmtPlain(dblUsed)}</span>
-      </div>` : ''}
-      <div class="ts-item">
-        <span class="ts-label">Total Bank Loan</span>
-        <span class="ts-value loan">${fmtPlain(totalLoan)}</span>
-      </div>
-      <div class="ts-divider"></div>
-      <div class="ts-item" style="margin-top:4px;">
-        <span class="ts-label" style="color:var(--gold);font-weight:700;font-size:17px;letter-spacing:0.5px;">Grand Total</span>
-        <span class="ts-value" style="color:var(--gold);font-weight:800;font-size:30px;font-family:'Inter',sans-serif;letter-spacing:-0.5px;">${fmtPlain(price + bsd)}</span>
-      </div>
-    </div>`;
-
-  const ok = shortfall === 0;
-  const dblBuffer = dblEnabled ? Math.max(0, dblTotal - dblUsed) : 0;
-
-  // Cash phases for DPS
+  // Cash timeline for DPS
   let cashTimelineHTML = '';
   if (scheme === 'dps') {
-    const phase1 = breakdown.cashBooking;
-    const phase2 = breakdown.cashSP + breakdown.cashBSD;
-    const phase3 = breakdown.cashTOP || 0;
-    const maxPhase = Math.max(phase1, phase2, phase3, 1);
-
+    const p1 = bd.cashBooking, p2 = bd.cashSP + bd.cashBSD, p3 = bd.cashTOP || 0;
+    const mx = Math.max(p1, p2, p3, 1);
     cashTimelineHTML = `
-    <div class="cash-timeline anim">
-      <div class="ct-title">📅 Cash Required — When</div>
+    <div class="cash-timeline-card anim">
+      <div class="ct-title">💵 Cash — When You Pay It</div>
       <div class="ct-phases">
-        <div class="ct-phase">
-          <span class="cp-when">Day 1</span>
-          <div class="ct-bar-wrap">
-            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:${(phase1/maxPhase*100).toFixed(1)}%"></div></div>
-            <div class="ct-breakdown">OTP Booking Fee</div>
-          </div>
-          <div class="ct-amt">${fmtPlain(phase1)}</div>
-        </div>
-        <div class="ct-phase">
-          <span class="cp-when">Within ~3 months</span>
-          <div class="ct-bar-wrap">
-            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:${(phase2/maxPhase*100).toFixed(1)}%"></div></div>
-            <div class="ct-breakdown">S&P + BSD to IRAS</div>
-          </div>
-          <div class="ct-amt">${fmtPlain(phase2)}</div>
-        </div>
-        <div class="ct-phase">
-          <span class="cp-when">Construction (~3yr)</span>
-          <div class="ct-bar-wrap">
-            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:0%"></div></div>
-            <div class="ct-breakdown">DPS — nothing due</div>
-          </div>
-          <div class="ct-amt" style="color:var(--text-muted)">$0</div>
-        </div>
-        ${phase3 > 0 ? `
-        <div class="ct-phase">
-          <span class="cp-when">At TOP</span>
-          <div class="ct-bar-wrap">
-            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:${(phase3/maxPhase*100).toFixed(1)}%"></div></div>
-            <div class="ct-breakdown">After CPF & DBL deployed</div>
-          </div>
-          <div class="ct-amt" style="color:var(--cash)">${fmtPlain(phase3)}</div>
-        </div>` : `
-        <div class="ct-phase">
-          <span class="cp-when">At TOP</span>
-          <div class="ct-bar-wrap">
-            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:0%"></div></div>
-            <div class="ct-breakdown">Fully covered by CPF + Loan + DBL</div>
-          </div>
-          <div class="ct-amt" style="color:var(--green)">$0</div>
-        </div>`}
+        ${phaseRow('Day 1', 'OTP Booking Fee', p1, mx, 'var(--cash)')}
+        ${phaseRow('~3 months', 'S&P Exercise + BSD', p2, mx, 'var(--cash)')}
+        ${phaseRow('Construction', 'DPS — nothing due', 0, mx, 'var(--text-muted)')}
+        ${phaseRow('At TOP', p3 > 0 ? 'After CPF + DBL deployed' : 'Fully covered by CPF + Loan + DBL', p3, mx, p3 > 0 ? 'var(--cash)' : 'var(--green)')}
       </div>
     </div>`;
   }
 
   const html = `
-    <!-- Summary strip -->
+    <!-- Summary Strip -->
     <div class="summary-strip anim">
       <div class="sum-card c-cash">
         <span class="sc-tag">Total Cash</span>
-        <span class="sc-amt">${fmtPlain(totalCash)}</span>
+        <span class="sc-amt">${fmt(totalCash)}</span>
       </div>
       <div class="sum-card c-cpf">
         <span class="sc-tag">CPF Used</span>
-        <span class="sc-amt">${fmtPlain(totalCPF)}</span>
+        <span class="sc-amt">${fmt(totalCPF)}</span>
       </div>
       <div class="sum-card c-loan">
         <span class="sc-tag">Bank Loan</span>
-        <span class="sc-amt">${fmtPlain(totalLoan)}</span>
+        <span class="sc-amt">${fmt(totalLoan)}</span>
       </div>
       <div class="sum-card c-dbl">
         <span class="sc-tag">${hasDbl ? 'DBL Used' : 'DBL'}</span>
-        <span class="sc-amt">${hasDbl ? fmtPlain(dblUsed) : '—'}</span>
+        <span class="sc-amt">${hasDbl ? fmt(dblUsed) : '—'}</span>
       </div>
     </div>
 
     <!-- Feasibility -->
     <div class="feasibility anim">
-      <div class="feas-left">
-        <div class="feas-dot" style="background:${ok ? 'var(--green)' : 'var(--red)'}; box-shadow: 0 0 8px ${ok ? 'rgba(91,184,138,0.4)' : 'rgba(232,93,117,0.4)'}"></div>
-        <div>
-          <div class="feas-label" style="color:${ok ? 'var(--green)' : 'var(--red)'}">${ok ? '✓ Deal is fully covered' : '⚠ Shortfall detected'}</div>
-          <div class="feas-sub">${ok ? 'All payments can be met with available funds' : 'Additional funds required to proceed'}</div>
-        </div>
+      <div class="feas-indicator" style="background:${ok ? 'var(--green)' : 'var(--red)'};box-shadow:0 0 8px ${ok ? 'rgba(82,168,114,0.4)' : 'rgba(217,91,110,0.4)'}"></div>
+      <div class="feas-text">
+        <div class="feas-label" style="color:${ok ? 'var(--green)' : 'var(--red)'}">${ok ? '✓ Deal fully covered' : '⚠ Shortfall detected'}</div>
+        <div class="feas-sub">${ok ? 'All payments met with available funds' : 'Additional funds required to proceed'}</div>
       </div>
-      <div style="display:flex;gap:20px;align-items:center">
-        <div class="feas-shortfall" style="color:var(--cash)">${fmtPlain(totalCash)}<br><span style="font-size:11px;font-family:Outfit;font-weight:400;color:var(--text-dim)">cash needed</span></div>
-        ${!ok ? `<div class="feas-shortfall" style="color:var(--red)">-${fmtPlain(shortfall)}<br><span style="font-size:11px;font-family:Outfit;font-weight:400;color:var(--text-dim)">shortfall</span></div>` : ''}
-        ${ok && hasDbl && dblBuffer > 0 ? `<div class="feas-shortfall" style="color:var(--dbl)">${fmtPlain(dblBuffer)}<br><span style="font-size:11px;font-family:Outfit;font-weight:400;color:var(--text-dim)">DBL buffer</span></div>` : ''}
+      <div class="feas-amounts">
+        <div class="feas-stat">
+          <span class="fs-val" style="color:var(--cash)">${fmt(totalCash)}</span>
+          <span class="fs-lbl">cash needed</span>
+        </div>
+        ${!ok ? `<div class="feas-stat"><span class="fs-val" style="color:var(--red)">-${fmt(shortfall)}</span><span class="fs-lbl">shortfall</span></div>` : ''}
+        ${ok && hasDbl && dblBuffer > 0 ? `<div class="feas-stat"><span class="fs-val" style="color:var(--dbl)">${fmt(dblBuffer)}</span><span class="fs-lbl">DBL buffer</span></div>` : ''}
       </div>
     </div>
 
-    <!-- Upfront Cash Callout -->
+    <!-- Upfront Callout -->
     <div class="upfront-callout anim">
       <div class="uc-label">⚡ Before Construction Starts</div>
-      <div class="uc-row">
+      <div class="uc-items">
         <div class="uc-item">
           <span class="uc-tag">OTP Booking</span>
-          <span class="uc-val cash">${fmtPlain(breakdown.cashBooking)}</span>
+          <span class="uc-val">${fmt(bd.cashBooking)}</span>
         </div>
-        <div class="uc-divider">+</div>
+        <div class="uc-sep">+</div>
         <div class="uc-item">
-          <span class="uc-tag">Exercise S&P</span>
-          <span class="uc-val" style="color:${breakdown.cashSP > 0 ? 'var(--cash)' : 'var(--text-muted)'}">${fmtPlain(breakdown.cashSP) || '—'} cash${upfrontCPF > 0 ? ` + <span style="color:var(--cpf)">${fmtPlain(upfrontCPF)} CPF</span>` : ''}</span>
+          <span class="uc-tag">S&P Exercise</span>
+          <span class="uc-val ${bd.cashSP === 0 ? 'neutral' : ''}">${bd.cashSP > 0 ? fmt(bd.cashSP) : (upfrontCPF > 0 ? fmt(upfrontCPF) + ' CPF' : '—')}</span>
         </div>
-        <div class="uc-divider">+</div>
+        <div class="uc-sep">+</div>
         <div class="uc-item">
-          <span class="uc-tag">Stamp Duty (BSD)</span>
-          <span class="uc-val cash">${fmtPlain(breakdown.cashBSD)}</span>
+          <span class="uc-tag">Stamp Duty</span>
+          <span class="uc-val ${bd.cashBSD === 0 ? 'neutral' : ''}">${fmt(bd.cashBSD) !== '—' ? fmt(bd.cashBSD) : '—'}</span>
         </div>
       </div>
-      <div class="uc-total">
-        <span>Total Upfront Cash</span>
-        <span class="uc-total-val">${fmtPlain(upfrontCash)}</span>
+      <div class="uc-total-row">
+        <span class="uc-total-lbl">Total Upfront Cash</span>
+        <span class="uc-total-val">${fmt(upfrontCash)}</span>
       </div>
     </div>
 
     <!-- Stage Table -->
-    <div class="stage-table anim">
-      <div class="st-header ${colClass}" style="cursor:default;">
-        <span>Stage</span>
-        <span>%</span>
-        <span>Amount</span>
-        <span style="color:var(--cash)">Cash</span>
-        <span style="color:var(--cpf)">CPF</span>
-        <span style="color:var(--loan)">Loan</span>
-        ${hasDbl ? `<span style="color:var(--dbl)">DBL</span>` : ''}
-        <span style="color:var(--gold)">Total</span>
+    <div class="stage-table-wrap anim">
+      <div class="stage-table">
+        <div class="st-header ${colClass}">
+          <span>Stage</span>
+          <span>%</span>
+          <span class="st-col-hide" style="text-align:right">Amount</span>
+          <span class="st-col-hide" style="text-align:right;color:var(--cash)">Cash</span>
+          <span class="st-col-hide" style="text-align:right;color:var(--cpf)">CPF</span>
+          <span class="st-col-hide" style="text-align:right;color:var(--loan)">Loan</span>
+          ${hasDbl ? `<span class="st-col-hide" style="text-align:right;color:var(--dbl)">DBL</span>` : ''}
+          <span style="text-align:right;color:var(--gold)">Total</span>
+        </div>
+        ${rowsHTML}
+        <div class="totals-section">
+          <div class="ts-row"><span class="ts-lbl">Total Cash</span><span class="ts-val cash">${fmt(totalCash)}</span></div>
+          <div class="ts-row"><span class="ts-lbl">Total CPF</span><span class="ts-val cpf">${fmt(totalCPF)}</span></div>
+          ${hasDbl ? `<div class="ts-row"><span class="ts-lbl">Bridging Loan</span><span class="ts-val dbl">${fmt(dblUsed)}</span></div>` : ''}
+          <div class="ts-row"><span class="ts-lbl">Total Bank Loan</span><span class="ts-val loan">${fmt(totalLoan)}</span></div>
+          <div class="ts-sep"></div>
+          <div class="ts-grand-row">
+            <span class="ts-grand-lbl">Grand Total</span>
+            <span class="ts-grand-val">${fmt(price + bsd)}</span>
+          </div>
+        </div>
       </div>
-      ${rowsHTML}
     </div>
 
     <!-- BSD note -->
     <div class="info-box anim">
-      <strong>BSD: ${fmtPlain(bsd)}</strong> auto-calculated on ${fmtPlain(price)} purchase price using IRAS progressive bands (1%–4%). 
-      ${scheme === 'dps' ? ' CPF is strategically held back from S&P and deployed at TOP to minimise cash needed at that stage.' : ''}
+      <strong>BSD: ${fmt(bsd)}</strong> on ${fmt(price)} purchase price using IRAS bands (1%–6%).
+      ${scheme === 'dps' ? ' CPF held back and deployed at TOP to minimise cash needed at that stage.' : ''}
     </div>
 
     ${cashTimelineHTML}
 
     <!-- Shortfall warning -->
     <div class="warning-box ${shortfall > 0 ? 'visible' : ''} anim">
-      <strong>Shortfall of ${fmtPlain(shortfall)}</strong> — client needs additional funds. 
-      Consider: increasing DBL (higher HDB valuation), more CPF, or a higher loan quantum if MSR allows.
+      <strong>Shortfall: ${fmt(shortfall)}</strong> — Client needs additional funds. Consider increasing DBL, higher loan quantum (if MSR allows), or additional CPF.
     </div>
   `;
 
   document.getElementById('results').innerHTML = html;
+  document.getElementById('empty-state').style.display = 'none';
+}
+
+function phaseRow(when, desc, amt, max, color) {
+  const w = max > 0 ? (amt / max * 100).toFixed(1) : 0;
+  return `<div class="ct-phase">
+    <span class="cp-when">${when}</span>
+    <div class="ct-bar-wrap">
+      <div class="ct-bar-track"><div class="ct-bar-fill" style="width:${w}%;background:${color}"></div></div>
+      <div class="ct-desc">${desc}</div>
+    </div>
+    <div class="ct-amt" style="color:${amt === 0 ? 'var(--text-muted)' : color}">${amt > 0 ? fmt(amt) : '$0'}</div>
+  </div>`;
 }
 
 function fmtN(n) {
-  if (!n || n === 0) return '<span style="color:var(--text-muted)">—</span>';
+  if (!n || n === 0) return `<span style="color:var(--text-muted)">—</span>`;
+  return '$' + Math.round(n).toLocaleString('en-SG');
+}
+
+function fmtPlain(n) {
+  if (!n || n === 0) return '—';
   return '$' + Math.round(n).toLocaleString('en-SG');
 }
 
 function buildBar(cash, cpf, loan, dbl, total) {
   if (total === 0) return '';
-  let html = '';
-  if (cash > 0) html += `<div class="mb-seg" style="background:var(--cash);width:${(cash/total*100).toFixed(1)}%"></div>`;
-  if (cpf > 0) html += `<div class="mb-seg" style="background:var(--cpf);width:${(cpf/total*100).toFixed(1)}%"></div>`;
-  if (loan > 0) html += `<div class="mb-seg" style="background:var(--loan);width:${(loan/total*100).toFixed(1)}%"></div>`;
-  if (dbl > 0) html += `<div class="mb-seg" style="background:var(--dbl);width:${(dbl/total*100).toFixed(1)}%"></div>`;
-  return html;
+  let h = '';
+  if (cash > 0) h += `<div class="mb-seg" style="background:var(--cash);width:${(cash/total*100).toFixed(1)}%"></div>`;
+  if (cpf > 0) h += `<div class="mb-seg" style="background:var(--cpf);width:${(cpf/total*100).toFixed(1)}%"></div>`;
+  if (loan > 0) h += `<div class="mb-seg" style="background:var(--loan);width:${(loan/total*100).toFixed(1)}%"></div>`;
+  if (dbl > 0) h += `<div class="mb-seg" style="background:var(--dbl);width:${(dbl/total*100).toFixed(1)}%"></div>`;
+  return h;
 }
 
-// Format inputs with commas as user types
+// Input formatting
 ['price','cpf','loan','dbl','dbl-valuation','dbl-outstanding'].forEach(id => {
-  const el = document.getElementById(id);
-  el.addEventListener('input', function() {
+  document.getElementById(id).addEventListener('input', function() {
     const raw = this.value.replace(/[^0-9]/g, '');
-    const formatted = raw ? parseInt(raw).toLocaleString('en-SG') : '';
-    this.value = formatted;
+    this.value = raw ? parseInt(raw).toLocaleString('en-SG') : '';
   });
 });
+
+function toggleRow(rowId, detailId) {
+  const row = document.getElementById(rowId);
+  const detail = document.getElementById(detailId);
+  if (!row || !detail) return;
+  const isOpen = detail.classList.contains('visible');
+  document.querySelectorAll('.row-detail.visible').forEach(d => d.classList.remove('visible'));
+  document.querySelectorAll('.st-row.expanded').forEach(r => r.classList.remove('expanded'));
+  if (!isOpen) { detail.classList.add('visible'); row.classList.add('expanded'); }
+}
 
 // ── DBL Calculator ──
 function calcDBL() {
   const val = parseNum('dbl-valuation');
   const outstanding = parseNum('dbl-outstanding');
-  if (!val) {
-    document.getElementById('dbl-calc-result').style.display = 'none';
-    return;
-  }
+  if (!val) { document.getElementById('dbl-calc-result').style.display = 'none'; return; }
 
-  // DBS formula:
-  // 85% of valuation
-  // Less: outstanding loan
-  // Less: HDB option money $5,000
-  // Less: agent commission 2% of valuation
-  const p85        = Math.round(val * 0.85);
+  const p85 = Math.round(val * 0.85);
   const commission = Math.round(val * 0.02);
   const optionMoney = 5000;
-  const maxDBL     = Math.max(0, p85 - outstanding - optionMoney - commission);
+  const maxDBL = Math.max(0, p85 - outstanding - optionMoney - commission);
 
   const lines = [
-    { label: '85% of Indicative Valuation', value: p85, color: 'var(--cpf)' },
-    { label: 'Less: Outstanding Loan', value: -outstanding, color: 'var(--cash)' },
-    { label: 'Less: HDB Option Money', value: -optionMoney, color: 'var(--cash)' },
-    { label: 'Less: Agent Commission (2%)', value: -commission, color: 'var(--cash)' },
+    { label: '85% of Indicative Valuation', value: p85, color: 'var(--cpf)', sign: '' },
+    { label: 'Less: Outstanding Loan', value: outstanding, color: 'var(--cash)', sign: '−' },
+    { label: 'Less: HDB Option Money', value: optionMoney, color: 'var(--cash)', sign: '−' },
+    { label: 'Less: Agent Commission (2%)', value: commission, color: 'var(--cash)', sign: '−' },
   ];
 
-  let linesHTML = '';
-  for (const l of lines) {
-    linesHTML += `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">
-        <span style="font-size:12px;color:var(--text-dim);">${l.label}</span>
-        <span style="font-size:13px;font-weight:600;color:${l.color};">${l.value < 0 ? '-' : ''}$${Math.abs(l.value).toLocaleString('en-SG')}</span>
-      </div>`;
-  }
+  document.getElementById('dbl-calc-lines').innerHTML = lines.map(l =>
+    `<div class="dbl-line">
+      <span>${l.label}</span>
+      <span style="color:${l.color}">${l.sign}$${l.value.toLocaleString('en-SG')}</span>
+    </div>`
+  ).join('');
 
-  document.getElementById('dbl-calc-lines').innerHTML = linesHTML;
   document.getElementById('dbl-calc-max').textContent = '$' + maxDBL.toLocaleString('en-SG');
   document.getElementById('dbl-calc-result').style.display = 'block';
 
-  // Save to store
-  const data = getStore();
-  data.dbl_valuation  = document.getElementById('dbl-valuation').value;
-  data.dbl_outstanding = document.getElementById('dbl-outstanding').value;
-  setStore(data);
+  const d = getStore();
+  d.dbl_valuation = document.getElementById('dbl-valuation').value;
+  d.dbl_outstanding = document.getElementById('dbl-outstanding').value;
+  setStore(d);
 }
 
 function applyDBL() {
   const maxText = document.getElementById('dbl-calc-max').textContent;
   if (!maxText) return;
   const val = maxText.replace(/[^0-9]/g, '');
-  const formatted = parseInt(val).toLocaleString('en-SG');
-  document.getElementById('dbl').value = formatted;
+  document.getElementById('dbl').value = parseInt(val).toLocaleString('en-SG');
   saveAndCalc();
-  // Scroll to results
-  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── Tappable rows ──
-function toggleRow(rowId, detailId) {
-  const row = document.getElementById(rowId);
-  const detail = document.getElementById(detailId);
-  if (!row || !detail) return;
-  const isOpen = detail.classList.contains('visible');
-  // Close all others
-  document.querySelectorAll('.row-detail.visible').forEach(d => d.classList.remove('visible'));
-  document.querySelectorAll('.st-row.expanded').forEach(r => r.classList.remove('expanded'));
-  if (!isOpen) {
-    detail.classList.add('visible');
-    row.classList.add('expanded');
-  }
-}
-
-// ── Persistence via URL hash (works on iPhone iCloud, no server needed) ──
+// ── Persistence ──
 function getStore() {
-  try {
-    const h = location.hash.slice(1);
-    return h ? JSON.parse(decodeURIComponent(h)) : {};
-  } catch(e) { return {}; }
+  try { const h = location.hash.slice(1); return h ? JSON.parse(decodeURIComponent(h)) : {}; }
+  catch(e) { return {}; }
 }
-
 function setStore(data) {
-  try {
-    history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(data)));
-  } catch(e) {}
+  try { history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(data))); } catch(e) {}
 }
 
 function saveAndCalc() {
-  const data = getStore();
-  ['price','cpf','loan','dbl'].forEach(id => {
-    data[id] = document.getElementById(id).value;
-  });
-  data.scheme = scheme;
-  data.dbl_on = dblEnabled ? '1' : '0';
-  setStore(data);
+  const d = getStore();
+  ['price','cpf','loan','dbl'].forEach(id => { d[id] = document.getElementById(id).value; });
+  d.scheme = scheme;
+  d.dbl_on = dblEnabled ? '1' : '0';
+  setStore(d);
   calc();
 }
 
 function saveDates() {
-  const d = document.getElementById('otp-date').value;
-  if (d) {
-    const data = getStore();
-    data.otp_date = d;
-    setStore(data);
-  }
+  const v = document.getElementById('otp-date').value;
+  if (v) { const d = getStore(); d.otp_date = v; setStore(d); }
 }
 
 function clearAll() {
-  ['price','cpf','loan','dbl'].forEach(id => {
+  ['price','cpf','loan','dbl','dbl-valuation','dbl-outstanding'].forEach(id => {
     document.getElementById(id).value = '';
   });
   document.getElementById('otp-date').value = '';
   history.replaceState(null, '', '#');
   document.getElementById('results').innerHTML = '';
+  document.getElementById('empty-state').style.display = 'block';
   document.getElementById('date-results').style.display = 'none';
   document.getElementById('booking-timeline-wrap').style.display = 'none';
   if (dblEnabled) toggleDBL();
-  setScheme('dps');
+  setScheme('nps');
 }
 
 function loadSaved() {
-  const data = getStore();
-  if (!data || !Object.keys(data).length) return; // nothing saved — stay blank
-
-  ['price','cpf','loan','dbl'].forEach(id => {
-    if (data[id]) document.getElementById(id).value = data[id];
-  });
-
-  if (data.scheme) setScheme(data.scheme);
-  if (data.dbl_on === '1' && !dblEnabled) toggleDBL(); // toggleDBL handles showing dbl-calc-panel
-  if (data.dbl_valuation) {
-    document.getElementById('dbl-valuation').value = data.dbl_valuation;
-    document.getElementById('dbl-outstanding').value = data.dbl_outstanding || '';
+  const d = getStore();
+  if (!d || !Object.keys(d).length) return;
+  ['price','cpf','loan','dbl'].forEach(id => { if (d[id]) document.getElementById(id).value = d[id]; });
+  if (d.scheme) setScheme(d.scheme);
+  if (d.dbl_on === '1' && !dblEnabled) toggleDBL();
+  if (d.dbl_valuation) {
+    document.getElementById('dbl-valuation').value = d.dbl_valuation;
+    document.getElementById('dbl-outstanding').value = d.dbl_outstanding || '';
     calcDBL();
   }
-
-  if (data.otp_date) {
-    document.getElementById('otp-date').value = data.otp_date;
-    calcDates();
-  }
-
-  if (data.price) calc();
+  if (d.otp_date) { document.getElementById('otp-date').value = d.otp_date; calcDates(); }
+  if (d.price) calc();
 }
 
-// Initial load — restore or start blank
 loadSaved();
 
-// ── Booking Timeline ──
+// ── Date calculations ──
 function calcDates() {
   const otpInput = document.getElementById('otp-date').value;
   if (!otpInput) {
@@ -1635,50 +1851,31 @@ function calcDates() {
   }
 
   const otp = new Date(otpInput);
-
-  // Key dates
-  // S&P Deadline = 9 weeks (63 days) from OTP
   const spDeadline = addDays(otp, 63);
-
-  // Eligibility approved / S&P Issued: ~3 weeks after OTP (docs submitted ASAP)
   const eligDate = addDays(otp, 21);
+  const spExDateA = addDays(eligDate, 21);
+  const bsdDateA = addDays(spExDateA, 14);
 
-  // Scenario A: Within 9 weeks
-  // S&P Issued → Exercise S&P: max 3 weeks (21 days)
-  // Exercise S&P → BSD paid: max 2 weeks (14 days)
-  // 15% DP paid at point of exercising S&P
-  const spExDateA  = addDays(eligDate, 21);   // Exercise S&P: S&P Issued + max 3 weeks
-  const dp15DateA  = spExDateA;               // 15% DP due when S&P exercised
-  const bsdDateA   = addDays(spExDateA, 14);  // BSD: 2 weeks after exercising S&P
-
-  // Scenario B: Over 9 weeks
-  // S&P Issued late, exercise S&P at 9-week deadline (S&P + 15% DP together)
-  // BSD 2 weeks after exercise
-  const sp15DateB  = spDeadline;              // Exercise S&P at 9-week hard deadline
-  const bsdDateB   = addDays(sp15DateB, 14); // BSD: 2 weeks after
-
-  // Store dates globally so stage rows can display them
-  // Use Scenario A dates (most common — within 9 weeks)
-  const fmtD = d => d.toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' });
   stageDates = {
-    otp:   fmtD(otp),
-    sp:    fmtD(spExDateA),
-    bsd:   fmtD(bsdDateA),
-    top:   'Year 3–4 (est.)',
-    csc:   '~12 months after TOP',
+    otp: fmtDate(otp),
+    sp: fmtDate(spExDateA),
+    bsd: fmtDate(bsdDateA),
+    top: 'Year 3–4 (est.)',
+    csc: '~12 months after TOP',
   };
-  // Re-render results table with dates injected — update date spans directly if already rendered
-  document.querySelectorAll('.stage-date').forEach(el => el.remove());
+
+  // Update any stage dates already rendered
   const stageMap = {
     'Booking / OTP': stageDates.otp,
-    'Exercise S&P':  stageDates.sp,
+    'Exercise S&P': stageDates.sp,
     'Buyer Stamp Duty': stageDates.bsd,
-    'TOP — Keys':    stageDates.top,
+    'TOP — Keys': stageDates.top,
     'CSC — Completion': stageDates.csc,
   };
+  document.querySelectorAll('.stage-date').forEach(el => el.remove());
   document.querySelectorAll('.st-stage').forEach(el => {
-    const stageName = el.childNodes[0].textContent.trim();
-    const date = stageMap[stageName];
+    const name = el.childNodes[0].textContent.trim();
+    const date = stageMap[name];
     if (date) {
       const span = document.createElement('span');
       span.className = 'stage-date';
@@ -1686,284 +1883,172 @@ function calcDates() {
       el.appendChild(span);
     }
   });
-  if (document.getElementById('price').value && !window._calcInProgress) calc();
 
-  // Get payment amounts from current calc
+  if (parseNum('price') && !window._calcInProgress) calc();
+
   const price = parseNum('price');
   const bsd = calcBSD(price);
-  const booking = Math.round(price * 0.05);
-  const dp15 = Math.round(price * 0.15);
+  const booking = price ? Math.round(price * 0.05) : 0;
+  const dp15 = price ? Math.round(price * 0.15) : 0;
 
-  // Date pills for sidebar
   const pills = [
-    { label: 'OTP / Booking Fee', date: otp, dot: 'var(--cash)', note: fmtPlain(booking) + ' cash' },
+    { label: 'OTP / Booking Fee', date: otp, dot: 'var(--cash)', note: booking ? fmt(booking) : '' },
     { label: 'Submit Docs (ASAP)', date: addDays(otp, 3), dot: 'var(--text-muted)', note: 'HDB eligibility check' },
-    { label: 'Eligibility Approved / S&P Issued', date: eligDate, dot: 'var(--gold)', note: '~3 weeks from OTP' },
-    { label: 'Exercise S&P (max 3 wks from S&P Issued)', date: spExDateA, dot: 'var(--loan)', note: 'Sign only' },
-    { label: 'BSD to IRAS (max 2 wks from exercise)', date: bsdDateA, dot: 'var(--cpf)', note: fmtPlain(bsd) + ' cash/CPF' },
-    { label: '15% Down Payment (completion)', date: spDeadline, dot: 'var(--gold)', note: fmtPlain(dp15) + ' cash/CPF' },
+    { label: 'Eligibility Approved + S&P Issued', date: eligDate, dot: 'var(--gold)', note: '~3 weeks from OTP' },
+    { label: 'Exercise S&P (within 3 wks of issued)', date: spExDateA, dot: 'var(--loan)', note: 'Sign agreement' },
+    { label: 'BSD to IRAS (within 2 wks of exercise)', date: bsdDateA, dot: 'var(--cpf)', note: bsd ? fmt(bsd) : '' },
+    { label: '15% Down Payment (by deadline)', date: spDeadline, dot: 'var(--gold-light)', note: dp15 ? fmt(dp15) : '' },
   ];
 
-  let pillsHTML = '';
-  for (const p of pills) {
-    const daysFromOTP = Math.round((p.date - otp) / 86400000);
-    pillsHTML += `
-      <div class="date-pill">
-        <div class="dp-dot" style="background:${p.dot}"></div>
-        <div class="dp-label">${p.label}</div>
-        <div>
-          <span class="dp-date">${formatDate(p.date)}</span>
-          <span class="dp-days">${daysFromOTP > 0 ? '+' + daysFromOTP + 'd' : 'Day 0'}</span>
-        </div>
-      </div>`;
-  }
+  document.getElementById('date-list').innerHTML = pills.map(p => {
+    const days = Math.round((p.date - otp) / 86400000);
+    return `<div class="date-pill">
+      <div class="dp-dot" style="background:${p.dot}"></div>
+      <div class="dp-label">${p.label}</div>
+      <div style="text-align:right;flex-shrink:0;">
+        <span class="dp-date">${fmtDate(p.date)}</span>
+        <span class="dp-days">${days > 0 ? '+' + days + 'd' : 'Day 0'}</span>
+      </div>
+    </div>`;
+  }).join('');
 
-  document.getElementById('date-list').innerHTML = pillsHTML;
   document.getElementById('date-results').style.display = 'block';
-
-  // Build full-width visual timeline
-  renderBookingTimeline(otp, spDeadline, bsdDateA, dp15DateA, sp15DateB, bsdDateB, booking, dp15, bsd, price);
+  renderBookingTimeline(otp, spDeadline, bsdDateA, eligDate, spExDateA, booking, dp15, bsd, price);
 }
 
-function renderBookingTimeline(otp, spDeadline, bsdA, dp15A, sp15B, bsdB, booking, dp15, bsd, price) {
+function renderBookingTimeline(otp, spDeadline, bsdA, eligDate, spExDate, booking, dp15, bsd, price) {
   const wrap = document.getElementById('booking-timeline-wrap');
-  const inner = document.getElementById('booking-timeline-inner');
   wrap.style.display = 'block';
 
-  // Dates derived from rules:
-  // Eligibility / S&P Issued: ~3 weeks from OTP
-  // Scenario A: S&P Issued → Exercise S&P max 3 weeks → BSD max 2 weeks after exercise
-  const eligDateR   = addDays(otp, 21);
-  const spExDateR   = addDays(eligDateR, 21);  // S&P exercise deadline: +3 weeks from issued
-  const bsdDateAR   = addDays(spExDateR, 14);  // BSD deadline: +2 weeks from exercise
+  const spIssuedB = spDeadline;
+  const spExDateB = addDays(spIssuedB, 21);
+  const bsdDateB = addDays(spExDateB, 14);
 
   const nodesA = [
-    { title: '5% Booking Fee (OTP)', date: otp, amount: fmtPlain(booking), type: 'cash', highlight: true },
+    { title: '5% Booking Fee', date: otp, amount: fmt(booking), type: 'cash', highlight: true },
     { title: 'Submit Docs', date: addDays(otp, 3), amount: 'ASAP', type: 'free', highlight: false },
-    { title: 'Eligibility Approved + S&P Issued', date: eligDateR, amount: '~3 weeks', type: 'free', highlight: false },
-    { title: 'Exercise S&P', date: spExDateR, amount: 'Sign only', type: 'free', highlight: false },
-    { title: 'BSD to IRAS', date: bsdDateAR, amount: fmtPlain(bsd), type: 'cpf', highlight: true },
-    { title: '15% Down Payment', date: spDeadline, amount: fmtPlain(dp15), type: 'mixed', highlight: true },
+    { title: 'S&P Issued', date: eligDate, amount: '~3 wks', type: 'free', highlight: false },
+    { title: 'Exercise S&P', date: spExDate, amount: 'Sign only', type: 'free', highlight: false },
+    { title: 'BSD to IRAS', date: bsdA, amount: fmt(bsd), type: 'cpf', highlight: true },
+    { title: '15% Down Payment', date: spDeadline, amount: fmt(dp15), type: 'mixed', highlight: true },
   ];
-
-  const nodesA_bsd = null;
-
-  // Scenario B: S&P Issued late, hard deadline = 9 weeks from OTP
-  // Exercise S&P + 15% DP at 9-week mark, BSD 2 weeks after
-  // Scenario B: >9 weeks
-  // OTP → 9 weeks → Eligibility + S&P Issued → 3 weeks → Exercise S&P + 15% DP → 2 weeks → BSD
-  const spIssuedB  = spDeadline;                    // S&P Issued AT 9-week mark
-  const spExDateB  = addDays(spIssuedB, 21);        // Exercise S&P + 15% DP: +3 weeks from issued
-  const bsdDateB2  = addDays(spExDateB, 14);        // BSD: +2 weeks from exercise
 
   const nodesB = [
-    { title: '5% Booking Fee (OTP)', date: otp, amount: fmtPlain(booking), type: 'cash', highlight: true },
+    { title: '5% Booking Fee', date: otp, amount: fmt(booking), type: 'cash', highlight: true },
     { title: 'Submit Docs', date: addDays(otp, 3), amount: 'ASAP', type: 'free', highlight: false },
-    { title: 'Eligibility Approved + S&P Issued', date: spIssuedB, amount: '9 weeks', type: 'free', highlight: false },
-    { title: 'Exercised S&P + 15% Down Payment', date: spExDateB, amount: fmtPlain(dp15), type: 'mixed', highlight: true },
-    { title: 'BSD to IRAS', date: bsdDateB2, amount: fmtPlain(bsd), type: 'cpf', highlight: true },
+    { title: 'S&P Issued', date: spIssuedB, amount: '9 wks', type: 'free', highlight: false },
+    { title: 'S&P + 15% DP', date: spExDateB, amount: fmt(dp15), type: 'mixed', highlight: true },
+    { title: 'BSD to IRAS', date: bsdDateB, amount: fmt(bsd), type: 'cpf', highlight: true },
   ];
 
-  inner.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:40px;">
-
-      <!-- Scenario A -->
+  document.getElementById('booking-timeline-inner').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:32px;">
       <div>
-        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(91,184,138,0.1);border:1px solid rgba(91,184,138,0.25);border-radius:20px;padding:4px 14px;margin-bottom:20px;">
-          <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green)">Scenario A — Within 9 Weeks</span>
-        </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">S&P Issued (~3 wks) → Exercise S&P within 3 weeks → BSD within 2 weeks → 15% DP at completion</div>
-        ${buildTimelineVisual(nodesA, nodesA_bsd, otp, dp15A, "WITHIN 9 WEEKS", {spIssued: eligDateR, spEx: spExDateR, label1: "~3 Weeks → S&P Issued", label2: "Max 3 Weeks → Exercise"})}
+        <div class="scenario-badge green">Scenario A — Within 9 Weeks</div>
+        <div class="scenario-desc">S&P Issued (~3 wks) → Exercise within 3 weeks → BSD within 2 weeks → 15% DP at completion</div>
+        ${buildTimelineVisual(nodesA)}
       </div>
-
-      <div style="height:1px;background:var(--border);"></div>
-
-      <!-- Scenario B -->
+      <div class="scenario-divider"></div>
       <div>
-        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,67,0.1);border:1px solid rgba(212,168,67,0.25);border-radius:20px;padding:4px 14px;margin-bottom:20px;">
-          <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Scenario B — &gt;9 Weeks</span>
-        </div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">OTP → 9 weeks → Eligibility + S&P Issued → Exercise S&P + 15% DP within 3 weeks → BSD within 2 weeks</div>
-        ${buildTimelineVisual(nodesB, null, otp, bsdDateB2, "> 9 WEEKS TOTAL", {spIssued: spIssuedB, spEx: spExDateB, label1: "9 Weeks → S&P Issued", label2: "Max 3 Weeks → Exercise"})}
+        <div class="scenario-badge gold">Scenario B — Over 9 Weeks</div>
+        <div class="scenario-desc">OTP → S&P Issued at 9-week mark → Exercise S&P + 15% DP within 3 weeks → BSD within 2 weeks</div>
+        ${buildTimelineVisual(nodesB)}
       </div>
-
     </div>`;
 }
 
-function buildTimelineVisual(nodes, bsdNode, startDate, endDate, totalLabel, milestones) {
+function buildTimelineVisual(nodes) {
   const uid = 'tl_' + Math.random().toString(36).slice(2,7);
-
-  // Build cards row — equal columns, no ticks in HTML
-  let colsHTML = '';
-  for (let i = 0; i < nodes.length; i++) {
-    const n = nodes[i];
-    colsHTML += `<div class="bk-col" id="${uid}_col_${i}">
+  let colsHTML = nodes.map((n, i) => `
+    <div class="bk-col" id="${uid}_c${i}">
       <div class="bk-box ${n.highlight ? 'highlight' : ''}">
         <div class="bk-title">${n.title}</div>
-        <div class="bk-date">${formatDate(n.date)}</div>
+        <div class="bk-date">${fmtDate(n.date)}</div>
         ${n.amount ? `<span class="bk-amount ${n.type}">${n.amount}</span>` : ''}
       </div>
-    </div>`;
-  }
+    </div>`).join('');
 
-  // Bracket data
-  const spIssuedDate = milestones && milestones.spIssued ? milestones.spIssued : addDays(startDate, 21);
-  const spExDate     = milestones && milestones.spEx     ? milestones.spEx     : addDays(startDate, 42);
-  const totalSpan    = Math.max(1, endDate - startDate);
-  const wIssued      = ((spIssuedDate - startDate) / totalSpan);
-  const wEx          = ((spExDate - startDate) / totalSpan);
-  const bracket1Label = milestones && milestones.label1 ? milestones.label1 : '~3 Weeks → S&P Issued';
-  const bracket2Label = milestones && milestones.label2 ? milestones.label2 : 'Max 3 Weeks → Exercise';
-
-  // After DOM insert, draw canvas
   setTimeout(() => {
     const wrap = document.getElementById(uid + '_wrap');
     if (!wrap) return;
     const row = document.getElementById(uid + '_row');
-    const rowRect = row.getBoundingClientRect();
+    if (!row) return;
     const wrapRect = wrap.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
 
-    // Get center-x of each column
-    const cols = nodes.map((_, i) => document.getElementById(uid + '_col_' + i));
-    const colCenters = cols.map(c => {
+    const cols = nodes.map((_, i) => document.getElementById(uid + '_c' + i));
+    const centers = cols.map(c => {
+      if (!c) return 0;
       const r = c.getBoundingClientRect();
       return r.left - wrapRect.left + r.width / 2;
     });
 
-    // Canvas height: from bottom of row to end of bracket area
-    const TICK_H   = 20;  // tick from card bottom to spine
-    const SPINE_Y  = rowRect.bottom - wrapRect.top + TICK_H; // spine Y in canvas coords
-    const BRK_H    = 32;  // bracket height below spine
-    const LBL_H    = 20;  // label below bracket
-    const TOTAL_H  = SPINE_Y + BRK_H + LBL_H + 50;
+    const TICK_H = 18;
+    const SPINE_Y = rowRect.bottom - wrapRect.top + TICK_H;
+    const PAD = 40;
+    const TOTAL_H = SPINE_Y + PAD;
 
-    const canvas = document.getElementById(uid + '_canvas');
+    const canvas = document.getElementById(uid + '_cv');
+    if (!canvas) return;
     const dpr = window.devicePixelRatio || 1;
-    canvas.width  = wrapRect.width * dpr;
+    canvas.width = wrapRect.width * dpr;
     canvas.height = TOTAL_H * dpr;
-    canvas.style.width  = wrapRect.width + 'px';
+    canvas.style.width = wrapRect.width + 'px';
     canvas.style.height = TOTAL_H + 'px';
     wrap.style.paddingBottom = TOTAL_H + 'px';
 
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    const gold   = '#D4A843';
-    const cash   = '#E8756A';
-    const loan   = '#6B9FD4';
-    const dbl    = '#E8A86A';
-    const muted  = '#6B6B72';
+    const gold = '#C9993A';
 
-    // Draw spine
-    ctx.beginPath();
-    ctx.moveTo(colCenters[0], SPINE_Y);
-    ctx.lineTo(colCenters[colCenters.length - 1], SPINE_Y);
-    ctx.strokeStyle = gold;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Draw ticks and dots for each node
-    cols.forEach((col, i) => {
-      const cx = colCenters[i];
-      const colRect = col.getBoundingClientRect();
-      const cardBottom = colRect.bottom - wrapRect.top;
-
-      // Tick
+    // Spine
+    if (centers[0] && centers[centers.length - 1]) {
       ctx.beginPath();
-      ctx.moveTo(cx, cardBottom);
-      ctx.lineTo(cx, SPINE_Y);
-      ctx.strokeStyle = gold;
+      ctx.moveTo(centers[0], SPINE_Y);
+      ctx.lineTo(centers[centers.length - 1], SPINE_Y);
+      ctx.strokeStyle = gold + '88';
       ctx.lineWidth = 2;
       ctx.stroke();
+    }
 
-      // Dot on spine
+    // Ticks + dots
+    cols.forEach((col, i) => {
+      if (!col) return;
+      const cx = centers[i];
+      const colR = col.getBoundingClientRect();
+      const bottom = colR.bottom - wrapRect.top;
+
       ctx.beginPath();
-      ctx.arc(cx, SPINE_Y, 5, 0, Math.PI * 2);
+      ctx.moveTo(cx, bottom);
+      ctx.lineTo(cx, SPINE_Y);
+      ctx.strokeStyle = gold + '55';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, SPINE_Y, 4, 0, Math.PI * 2);
       ctx.fillStyle = gold;
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(cx, SPINE_Y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = '#0D0D0F';
+      ctx.arc(cx, SPINE_Y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#0A0A0C';
       ctx.fill();
     });
-
-    // Draw bracket arrows below spine
-    const W = wrapRect.width;
-    const x0 = colCenters[0];
-    const xEnd = colCenters[colCenters.length - 1];
-    const xIssued = x0 + (xEnd - x0) * wIssued;
-    const xEx     = x0 + (xEnd - x0) * wEx;
-
-    const brackets = [
-      { x1: x0,      x2: xIssued, color: cash,  label: bracket1Label },
-      { x1: xIssued, x2: xEx,     color: loan,  label: bracket2Label },
-      { x1: xEx,     x2: xEnd,    color: dbl,   label: 'Max 2 Weeks → BSD' },
-    ];
-
-    ctx.font = '600 11px Outfit, sans-serif';
-    const BRK_Y = SPINE_Y + 16;
-
-    brackets.forEach(b => {
-      if (b.x2 <= b.x1) return;
-      const mx = (b.x1 + b.x2) / 2;
-
-      // Horizontal line
-      ctx.beginPath();
-      ctx.moveTo(b.x1, BRK_Y);
-      ctx.lineTo(b.x2, BRK_Y);
-      ctx.strokeStyle = b.color;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // End caps (vertical ticks)
-      [b.x1, b.x2].forEach(x => {
-        ctx.beginPath();
-        ctx.moveTo(x, BRK_Y - 6);
-        ctx.lineTo(x, BRK_Y + 6);
-        ctx.strokeStyle = b.color;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      });
-
-      // Label
-      ctx.fillStyle = b.color;
-      ctx.textAlign = 'center';
-      ctx.fillText(b.label, mx, BRK_Y + 22);
-    });
-
-    // Total label
-    const TOTAL_Y = BRK_Y + 48;
-    ctx.strokeStyle = gold + '55';
-    ctx.lineWidth = 1.5;
-    const labelText = totalLabel || '9 WEEKS TOTAL';
-    const labelW = ctx.measureText(labelText).width + 24;
-    const lx = W / 2;
-    ctx.beginPath(); ctx.moveTo(x0, TOTAL_Y); ctx.lineTo(lx - labelW/2 - 10, TOTAL_Y); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(lx + labelW/2 + 10, TOTAL_Y); ctx.lineTo(xEnd, TOTAL_Y); ctx.stroke();
-    ctx.fillStyle = gold;
-    ctx.font = '700 11px Outfit, sans-serif';
-    ctx.letterSpacing = '2px';
-    ctx.fillText(labelText, lx, TOTAL_Y + 4);
-
-  }, 80);
+  }, 100);
 
   return `
-    <div class="bk-timeline">
-      <div class="bk-canvas-wrap" id="${uid}_wrap">
-        <div class="bk-cards-row" id="${uid}_row">${colsHTML}</div>
-        <canvas id="${uid}_canvas"></canvas>
-      </div>
+    <div class="tl-canvas-wrap" id="${uid}_wrap">
+      <div class="bk-cards-row" id="${uid}_row">${colsHTML}</div>
+      <canvas id="${uid}_cv"></canvas>
     </div>`;
 }
 
 function addDays(date, days) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + days);
-  return d;
+  const d = new Date(date); d.setDate(d.getDate() + days); return d;
 }
-
-function formatDate(date) {
-  return date.toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' });
+function fmtDate(date) {
+  return date.toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' });
 }
 </script>
 </body>
