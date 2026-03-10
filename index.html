@@ -500,6 +500,46 @@ body::before {
 }
 .info-box strong { color: var(--gold); }
 
+/* Total Summary Row */
+.total-summary-row {
+  background: var(--gold-glow);
+  border-top: 1px solid rgba(212,168,67,0.25);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ts-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ts-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.ts-value {
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.ts-value.cash { color: var(--cash); }
+.ts-value.cpf  { color: var(--cpf);  }
+.ts-value.loan { color: var(--loan); }
+.ts-value.dbl  { color: var(--dbl);  }
+
+.ts-divider {
+  height: 1px;
+  background: rgba(212,168,67,0.2);
+  margin: 2px 0;
+}
+
 /* Booking Timeline */
 .bk-timeline { position: relative; }
 .bk-canvas-wrap { position: relative; width: 100%; }
@@ -1005,17 +1045,30 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
       </div>`;
   }
 
-  // Totals row
+  // Totals row — clean stacked summary, no clutter
   rowsHTML += `
-    <div class="st-row ${colClass} total-row">
-      <div class="st-stage">TOTAL</div>
-      <div class="st-num">100%</div>
-      <div class="st-num total">${fmtPlain(price + bsd)}</div>
-      <div class="st-num cash">${fmtPlain(totalCash)}</div>
-      <div class="st-num cpf">${fmtPlain(totalCPF)}</div>
-      <div class="st-num loan">${fmtPlain(totalLoan)}</div>
-      ${hasDbl ? `<div class="st-num dbl">${fmtPlain(dblUsed)}</div>` : ''}
-      <div class="st-num total">${fmtPlain(totalCash + totalCPF + totalLoan + dblUsed)}</div>
+    <div class="total-summary-row">
+      <div class="ts-item">
+        <span class="ts-label">Total Cash</span>
+        <span class="ts-value cash">${fmtPlain(totalCash)}</span>
+      </div>
+      <div class="ts-item">
+        <span class="ts-label">Total CPF</span>
+        <span class="ts-value cpf">${fmtPlain(totalCPF)}</span>
+      </div>
+      ${hasDbl ? `<div class="ts-item">
+        <span class="ts-label">Total Bridging Loan</span>
+        <span class="ts-value dbl">${fmtPlain(dblUsed)}</span>
+      </div>` : ''}
+      <div class="ts-item">
+        <span class="ts-label">Total Bank Loan</span>
+        <span class="ts-value loan">${fmtPlain(totalLoan)}</span>
+      </div>
+      <div class="ts-divider"></div>
+      <div class="ts-item">
+        <span class="ts-label" style="color:var(--gold);font-weight:700;">Grand Total</span>
+        <span class="ts-value" style="color:var(--gold);font-weight:700;">${fmtPlain(price + bsd)}</span>
+      </div>
     </div>`;
 
   const ok = shortfall === 0;
