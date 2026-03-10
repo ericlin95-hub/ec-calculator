@@ -1459,42 +1459,99 @@ function calc() {
       { cashBooking, cashSP, cashBSD, cashTOP, cpfForBSD, cpfForSP, cpfForTOP });
 
   } else {
-    const cpfForBSD = Math.min(cpfTotal, bsd);
-    const cpfForSP = Math.min(cpfTotal - cpfForBSD, sp);
-    const cashSP = sp - cpfForSP;
-    const cashBSD = bsd - cpfForBSD;
-    const cashBooking = booking;
-    const totalLoan = loanTotal;
-    const totalCPF = cpfForBSD + cpfForSP;
-    const totalCash = cashBooking + cashSP + cashBSD;
+    // ── NPS: Normal Payment Scheme ──
+    // MAS fund disbursement order: CASH first → CPF second → Bank Loan last
+    // Reference: Booking 5% Cash, Downpayment 15% Cash,
+    //            Stamp Duty (Cash portion first, then CPF), Legal Fee CPF,
+    //            Foundation 5% CPF + 5% Loan (Loan starts here when max 75% LTV),
+    //            Concrete Framework 10% (CPF remainder then Loan),
+    //            Remaining stages all Bank Loan, TOP 25% Loan, CSC 15% Loan
 
-    const milestones = [
-      { name: 'Foundation', pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months from S&P' },
-      { name: 'Concrete Framework', pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months after Foundation' },
-      { name: 'Brick Walls', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after Framework' },
-      { name: 'Ceiling / Roofing', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after Walls' },
-      { name: 'Doors & Windows', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after Ceiling' },
-      { name: 'Carpark / Drainage', pct: '5%', amt: Math.round(price * 0.05), when: '3–6 months after D&W' },
-      { name: 'TOP — Keys', pct: '25%', amt: Math.round(price * 0.25), when: '9–12 months after Carpark' },
-      { name: 'CSC — Completion', pct: '15%', amt: Math.round(price * 0.15), when: '12 months after TOP' },
+    const legalFee = 3000; // standard legal fee paid by CPF
+
+    // Step 1: CASH — Booking 5% and Downpayment 15% are always cash first
+    const cashBooking = booking;  // 5% cash
+    const cashDP = sp;            // 15% cash (full downpayment in cash for NPS — buyer must have cash for this)
+
+    // Step 2: CASH portion of Stamp Duty — cash must be settled before CPF
+    // Per reference: Stamp Duty has a cash portion first, remainder CPF
+    // Cash available after booking & DP is already spent; BSD is settled:
+    // BSD cash = amount that must be paid in cash = bsd up to available cash beyond the 20% already paid
+    // In NPS the 20% (5% + 15%) is all cash. BSD is then split: cash first, then CPF.
+    // Reference example: BSD $44,600 → $4,000 cash + rest CPF. We approximate:
+    // Cash for BSD = any BSD amount that exceeds CPF available (CPF used after loan is secured)
+    // Per MAS rules: CPF can only be used after loan is secured. Loan secured at Foundation stage (5%).
+    // So for Booking, DP, and Stamp Duty (before Foundation), CPF is NOT yet available.
+    // This means BSD must be paid fully in cash if it comes before Foundation.
+    // HOWEVER: the reference slide shows BSD paid partly cash partly CPF, meaning loan is already secured
+    // by the time BSD is due. In practice, buyer secures loan in-principle before booking.
+    // We follow the reference: BSD = Cash first (up to what's needed), then CPF covers rest.
+
+    // For simplicity matching reference: BSD split → cash for portion exceeding CPF, CPF for rest
+    // But strictly: CASH must all be settled before CPF. Since booking+DP use all "required cash",
+    // BSD comes next. Available cash assumed sufficient. CPF used for BSD after cash portion.
+    // We apply: cpfForBSD uses CPF, cash covers any shortfall.
+    const cpfForLegal = Math.min(cpfTotal, legalFee);
+    const cpfAfterLegal = Math.max(0, cpfTotal - cpfForLegal);
+    const cpfForBSD = Math.min(cpfAfterLegal, bsd);
+    const cashBSD = bsd - cpfForBSD; // cash covers what CPF can't
+    const cpfAfterBSD = Math.max(0, cpfAfterLegal - cpfForBSD);
+
+    // Total cash so far (upfront before construction):
+    // cashBooking + cashDP + cashBSD
+    const totalCashUpfront = cashBooking + cashDP + cashBSD;
+
+    // Step 3: Construction stages — Bank Loan starts at Foundation (5%)
+    // Per reference: Foundation = 5% CPF + 5% Loan (loan disbursement begins)
+    // Remaining CPF after BSD and legal used in Foundation/Concrete Framework stages
+    // After Foundation CPF exhausted, rest is all Bank Loan
+
+    // Construction milestones: CPF exhausts first (BSD/legal already consumed some),
+    // then loan fills the rest. Loan is ALWAYS fully drawn up to loanTotal.
+    const allMilestones = [
+      { name: 'Foundation',         pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months from S&P'       },
+      { name: 'Concrete Framework',  pct: '10%', amt: Math.round(price * 0.10), when: '6–9 months after Foundation' },
+      { name: 'Brick Walls',         pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Framework'  },
+      { name: 'Ceiling / Roofing',   pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Walls'      },
+      { name: 'Doors & Windows',     pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after Ceiling'    },
+      { name: 'Carpark / Drainage',  pct: '5%',  amt: Math.round(price * 0.05), when: '3–6 months after D&W'        },
+      { name: 'TOP — Keys',          pct: '25%', amt: Math.round(price * 0.25), when: '9–12 months after Carpark'   },
+      { name: 'CSC — Completion',    pct: '15%', amt: Math.round(price * 0.15), when: '12 months after TOP'          },
     ];
 
-    stages = [
-      { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0, date: stageDates.otp },
-      { stage: 'Exercise S&P', when: 'Within 9 weeks of OTP', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0, date: stageDates.sp },
-      { stage: 'Buyer Stamp Duty', when: '14 days from S&P', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0, date: stageDates.bsd },
-    ];
+    // Distribute CPF (remaining after BSD/legal) and Loan across milestones
+    // CPF covers stages first (in order), loan fills whatever CPF cannot cover
+    // Loan is drawn until loanTotal is fully used — no capping below max
+    let cpfLeft2 = cpfAfterBSD;
+    let loanLeft = loanTotal; // start with full loan — always draw to max
 
-    let loanLeft = loanTotal;
-    for (const m of milestones) {
-      const l = Math.min(loanLeft, m.amt);
-      loanLeft -= l;
-      stages.push({ stage: m.name, when: m.when, pct: m.pct, total: m.amt, cash: 0, cpf: 0, loan: l, dbl: 0 });
+    const constructionStages = [];
+    for (const m of allMilestones) {
+      const cpfForStage = Math.min(cpfLeft2, m.amt);
+      cpfLeft2 -= cpfForStage;
+      const afterCPF = m.amt - cpfForStage;
+      const loanForStage = Math.min(loanLeft, afterCPF);
+      loanLeft -= loanForStage;
+      const cashForStage = Math.max(0, afterCPF - loanForStage);
+      constructionStages.push({ stage: m.name, when: m.when, pct: m.pct, total: m.amt, cash: cashForStage, cpf: cpfForStage, loan: loanForStage, dbl: 0 });
     }
 
-    const shortfall = Math.max(0, price + bsd - totalCash - totalCPF - totalLoan);
-    renderResults(stages, totalCash, totalCPF, totalLoan, 0, 0, shortfall, price, bsd,
-      { cashBooking, cashSP, cashBSD, cashTOP: 0, cpfForBSD, cpfForSP, cpfForTOP: 0 });
+    const cpfUsedInConstruction = cpfTotal - cpfAfterLegal + (cpfAfterBSD - cpfLeft2);
+    const totalCPF = cpfForLegal + cpfForBSD + (cpfAfterBSD - cpfLeft2);
+    const totalLoanUsed = loanTotal - loanLeft; // always equals loanTotal when loan is fully drawn
+    const totalCash = totalCashUpfront;
+    const shortfall = Math.max(0, price + bsd + legalFee - totalCash - totalCPF - totalLoanUsed);
+
+    stages = [
+      { stage: 'Booking / OTP',    when: 'Day 1 · Cash only',                   pct: '5%', total: booking,  cash: cashBooking, cpf: 0,           loan: 0, dbl: 0, date: stageDates.otp },
+      { stage: 'Downpayment',      when: 'Within 9 weeks of OTP',               pct: '15%',total: sp,       cash: cashDP,      cpf: 0,           loan: 0, dbl: 0, date: stageDates.sp  },
+      { stage: 'Buyer Stamp Duty', when: '14 days from S&P · Cash then CPF',    pct: '—',  total: bsd,      cash: cashBSD,     cpf: cpfForBSD,   loan: 0, dbl: 0, date: stageDates.bsd },
+      { stage: 'Legal Fee',        when: 'Upon S&P · CPF',                       pct: '—',  total: legalFee, cash: 0,           cpf: cpfForLegal, loan: 0, dbl: 0 },
+      ...constructionStages,
+    ];
+
+    renderResults(stages, totalCash, totalCPF, totalLoanUsed, 0, 0, shortfall, price, bsd,
+      { cashBooking, cashSP: cashDP, cashBSD, cashTOP: 0, cpfForBSD, cpfForSP: 0, cpfForTOP: 0 });
   }
 }
 
@@ -1634,7 +1691,7 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
         </div>
         <div class="uc-sep">+</div>
         <div class="uc-item">
-          <span class="uc-tag">S&P Exercise</span>
+          <span class="uc-tag">${scheme === 'nps' ? 'Downpayment' : 'S&P Exercise'}</span>
           <span class="uc-val ${bd.cashSP === 0 ? 'neutral' : ''}">${bd.cashSP > 0 ? fmt(bd.cashSP) : (upfrontCPF > 0 ? fmt(upfrontCPF) + ' CPF' : '—')}</span>
         </div>
         <div class="uc-sep">+</div>
@@ -1671,7 +1728,7 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
           <div class="ts-sep"></div>
           <div class="ts-grand-row">
             <span class="ts-grand-lbl">Grand Total</span>
-            <span class="ts-grand-val">${fmt(price + bsd)}</span>
+            <span class="ts-grand-val">${fmt(price + bsd + (scheme === 'nps' ? 3000 : 0))}</span>
           </div>
         </div>
       </div>
@@ -1680,7 +1737,7 @@ function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal
     <!-- BSD note -->
     <div class="info-box anim">
       <strong>BSD: ${fmt(bsd)}</strong> on ${fmt(price)} purchase price using IRAS bands (1%–6%).
-      ${scheme === 'dps' ? ' CPF held back and deployed at TOP to minimise cash needed at that stage.' : ''}
+      ${scheme === 'dps' ? ' CPF held back and deployed at TOP to minimise cash needed at that stage.' : ' Legal fee ($3,000) paid via CPF. Downpayment (5% + 15%) fully in cash. CPF deployed from Foundation stage onwards.'}
     </div>
 
     ${cashTimelineHTML}
