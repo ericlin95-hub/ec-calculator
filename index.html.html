@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EC Financial Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D0D0F;
+  --surface: #141416;
+  --surface2: #1C1C20;
+  --surface3: #242428;
+  --border: rgba(255,255,255,0.07);
+  --border-bright: rgba(255,255,255,0.14);
+  --gold: #D4A843;
+  --gold-dim: rgba(212,168,67,0.15);
+  --gold-glow: rgba(212,168,67,0.08);
+  --cash: #E8756A;
+  --cash-dim: rgba(232,117,106,0.15);
+  --cpf: #5BB8A0;
+  --cpf-dim: rgba(91,184,160,0.15);
+  --loan: #6B9FD4;
+  --loan-dim: rgba(107,159,212,0.15);
+  --dbl: #E8A86A;
+  --dbl-dim: rgba(232,168,106,0.15);
+  --text: #F0EDE8;
+  --text-muted: #6B6B72;
+  --text-dim: #9A9AA5;
+  --red: #E85D75;
+  --green: #5BB88A;
+  --radius: 14px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Subtle background pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle at 15% 15%, rgba(212,168,67,0.05) 0%, transparent 45%),
+                    radial-gradient(circle at 85% 85%, rgba(107,159,212,0.04) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header ── */
+.header { margin-bottom: 44px; }
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(212,168,67,0.25);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.header h1 span { color: var(--gold); }
+.header p { font-size: 15px; color: var(--text-dim); font-weight: 300; }
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Panel ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.panel-header .ph-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  background: var(--gold-dim);
+}
+.panel-header h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+.panel-header p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.panel-body { padding: 20px 24px; }
+
+/* ── Scheme Toggle ── */
+.scheme-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.scheme-btn {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.scheme-btn:hover { border-color: var(--border-bright); color: var(--text); }
+.scheme-btn.active {
+  background: var(--gold-dim);
+  border-color: rgba(212,168,67,0.4);
+  color: var(--gold);
+}
+.scheme-btn .sb-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; display: block; }
+.scheme-btn .sb-sub { font-size: 10px; color: inherit; opacity: 0.7; margin-top: 2px; display: block; }
+
+/* ── Input Group ── */
+.input-group { margin-bottom: 18px; }
+.input-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.input-label .lbl-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-prefix {
+  position: absolute;
+  left: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.input-wrap input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px 12px 28px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.input-wrap input:focus {
+  border-color: var(--gold);
+  background: var(--surface3);
+}
+.input-wrap input::placeholder { color: var(--text-muted); }
+
+/* Toggle switch */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+.toggle-info .ti-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.toggle-info .ti-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.toggle {
+  width: 44px; height: 24px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+.toggle.on {
+  background: var(--gold-dim);
+  border-color: rgba(212,168,67,0.4);
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: transform 0.2s, background 0.2s;
+}
+.toggle.on::after {
+  transform: translateX(20px);
+  background: var(--gold);
+}
+
+/* DBL inputs - shown when toggle on */
+.dbl-fields {
+  display: none;
+  background: var(--surface2);
+  border: 1px solid rgba(232,168,106,0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  gap: 14px;
+  flex-direction: column;
+}
+.dbl-fields.visible { display: flex; }
+.dbl-fields .input-group { margin-bottom: 0; }
+
+/* Section divider */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 16px;
+}
+.section-divider span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.section-divider::before, .section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Results Panel ── */
+.results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Summary strip */
+.summary-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.sum-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.sum-card:hover { border-color: var(--border-bright); }
+.sum-card .sc-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+.sum-card .sc-amt {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+  line-height: 1;
+}
+.sum-card.c-cash { border-top: 2px solid var(--cash); }
+.sum-card.c-cash .sc-tag { color: var(--cash); }
+.sum-card.c-cpf { border-top: 2px solid var(--cpf); }
+.sum-card.c-cpf .sc-tag { color: var(--cpf); }
+.sum-card.c-loan { border-top: 2px solid var(--loan); }
+.sum-card.c-loan .sc-tag { color: var(--loan); }
+.sum-card.c-dbl { border-top: 2px solid var(--dbl); }
+.sum-card.c-dbl .sc-tag { color: var(--dbl); }
+
+/* Feasibility */
+.feasibility {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.feas-left { display: flex; align-items: center; gap: 12px; }
+.feas-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.feas-label { font-size: 14px; font-weight: 600; }
+.feas-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.feas-shortfall {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Stage table */
+.stage-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.st-header {
+  display: grid;
+  padding: 12px 20px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.st-header.nps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr; }
+.st-header.dps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; }
+
+.st-row {
+  display: grid;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  transition: background 0.15s;
+}
+.st-row:last-child { border-bottom: none; }
+.st-row:hover { background: var(--surface2); }
+.st-row.nps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr; }
+.st-row.dps-cols { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; }
+.st-row.nil-row { opacity: 0.5; }
+.st-row.total-row {
+  background: var(--gold-glow);
+  border-top: 1px solid rgba(212,168,67,0.2);
+  font-weight: 600;
+}
+
+.st-stage { font-size: 13px; font-weight: 500; color: var(--text); }
+.st-stage .stage-when { font-size: 10px; color: var(--text-muted); font-weight: 400; display: block; margin-top: 2px; }
+.st-num { font-size: 13px; font-weight: 500; color: var(--text); text-align: right; }
+.st-num.cash { color: var(--cash); }
+.st-num.cpf { color: var(--cpf); }
+.st-num.loan { color: var(--loan); }
+.st-num.dbl { color: var(--dbl); }
+.st-num.total { color: var(--gold); font-weight: 700; font-size: 14px; }
+.st-num.nil { color: var(--text-muted); font-size: 12px; }
+.st-num.warn { color: var(--red); }
+
+/* Visual bar in stage */
+.mini-bar {
+  display: flex;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  gap: 1px;
+  margin-top: 4px;
+}
+.mb-seg { height: 100%; border-radius: 1px; }
+
+/* Cash timeline */
+.cash-timeline {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+}
+.ct-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+.ct-phases { display: flex; flex-direction: column; gap: 12px; }
+.ct-phase {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.ct-phase .cp-when {
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 100px;
+  flex-shrink: 0;
+}
+.ct-bar-wrap { flex: 1; }
+.ct-bar-track {
+  height: 8px;
+  background: var(--surface3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.ct-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--cash);
+  transition: width 0.5s ease;
+}
+.ct-bar-fill.cpf { background: var(--cpf); }
+.ct-bar-fill.mixed {
+  background: linear-gradient(90deg, var(--cash) 0%, var(--cpf) 100%);
+}
+.ct-amt { font-size: 13px; font-weight: 600; color: var(--text); }
+.ct-breakdown { font-size: 11px; color: var(--text-muted); }
+
+/* Warning boxes */
+.warning-box {
+  background: rgba(232,93,117,0.08);
+  border: 1px solid rgba(232,93,117,0.25);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #F08090;
+  display: none;
+}
+.warning-box.visible { display: block; }
+.warning-box strong { color: var(--red); }
+
+.info-box {
+  background: var(--gold-glow);
+  border: 1px solid rgba(212,168,67,0.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.info-box strong { color: var(--gold); }
+
+/* Booking Timeline */
+.bk-timeline { position: relative; }
+.bk-canvas-wrap { position: relative; width: 100%; }
+.bk-canvas-wrap canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+.bk-cards-row {
+  display: flex;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+.bk-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.bk-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+  width: 100%;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: default;
+}
+.bk-box:hover {
+  border-color: rgba(212,168,67,0.35);
+  transform: translateY(-2px);
+}
+.bk-box.highlight {
+  border-color: rgba(212,168,67,0.4);
+  background: var(--gold-glow);
+}
+.bk-box .bk-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.bk-box .bk-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 3px;
+}
+.bk-box .bk-amount {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.bk-box .bk-amount.cash { background: var(--cash-dim); color: var(--cash); }
+.bk-box .bk-amount.cpf { background: var(--cpf-dim); color: var(--cpf); }
+.bk-box .bk-amount.mixed { background: var(--gold-dim); color: var(--gold); }
+.bk-box .bk-amount.free { background: rgba(91,184,138,0.15); color: var(--green); }
+
+/* Bracket arrows below spine */
+.bk-brackets {
+  position: relative;
+  height: 60px;
+  margin-top: 24px;
+}
+.bk-bracket {
+  position: absolute;
+  top: 0;
+  height: 28px;
+  border-bottom: 2px solid var(--cash);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.bk-bracket::before, .bk-bracket::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  width: 2px;
+  height: 10px;
+  background: var(--cash);
+}
+.bk-bracket::before { left: 0; }
+.bk-bracket::after { right: 0; }
+.bk-bracket-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cash);
+  white-space: nowrap;
+  margin-bottom: -20px;
+}
+.bk-bracket.gold {
+  border-bottom-color: var(--gold);
+}
+.bk-bracket.gold::before, .bk-bracket.gold::after { background: var(--gold); }
+.bk-bracket.gold .bk-bracket-label { color: var(--gold); }
+
+/* Date pill */
+.date-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.2s;
+}
+.date-pill:hover { border-color: var(--border-bright); }
+.date-pill .dp-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.date-pill .dp-label { font-size: 12px; font-weight: 500; color: var(--text-dim); flex: 1; }
+.date-pill .dp-date { font-size: 13px; font-weight: 600; color: var(--text); }
+.date-pill .dp-days { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.anim { animation: fadeIn 0.4s ease both; }
+
+/* Responsive */
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .summary-strip { grid-template-columns: repeat(2,1fr); }
+  .st-header, .st-row { font-size: 11px; gap: 4px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div class="header-badge">⬡ PropNex EC Tool</div>
+      <button onclick="clearAll()" style="background:rgba(232,117,106,0.1);border:1px solid rgba(232,117,106,0.25);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--cash);cursor:pointer;font-family:Outfit,sans-serif;">✕ Clear All</button>
+    </div>
+    <h1>EC Financial <span>Calculator</span></h1>
+    <p>Input your client's numbers to instantly see full cash, CPF and loan breakdown by stage</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT: Inputs -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="ph-icon">🏠</div>
+          <div>
+            <h2>Purchase Details</h2>
+            <p>Property & payment scheme</p>
+          </div>
+        </div>
+        <div class="panel-body">
+
+          <div class="scheme-toggle">
+            <button class="scheme-btn active" id="btn-dps" onclick="setScheme('dps')">
+              <span class="sb-label">DPS</span>
+              <span class="sb-sub">Deferred Payment</span>
+            </button>
+            <button class="scheme-btn" id="btn-nps" onclick="setScheme('nps')">
+              <span class="sb-label">NPS</span>
+              <span class="sb-sub">Normal Progressive</span>
+            </button>
+          </div>
+
+          <div class="input-group">
+            <div class="input-label">Purchase Price <span class="lbl-hint">New launch EC</span></div>
+            <div class="input-wrap">
+              <span class="input-prefix">$</span>
+              <input type="text" id="price" placeholder="e.g. 1,000,000" oninput="saveAndCalc()">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="ph-icon">💰</div>
+          <div>
+            <h2>Available Funds</h2>
+            <p>Enter client's financial resources</p>
+          </div>
+        </div>
+        <div class="panel-body">
+
+          <div class="input-group">
+            <div class="input-label">CPF (OA Balance) <span class="lbl-hint">Ordinary Account</span></div>
+            <div class="input-wrap">
+              <span class="input-prefix">$</span>
+              <input type="text" id="cpf" placeholder="e.g. 100,000" oninput="saveAndCalc()">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-label">Max Bank Loan <span class="lbl-hint">Based on MSR 30%</span></div>
+            <div class="input-wrap">
+              <span class="input-prefix">$</span>
+              <input type="text" id="loan" placeholder="e.g. 100,000" oninput="saveAndCalc()">
+            </div>
+          </div>
+
+          <div class="section-divider"><span>Optional</span></div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">Bridging Loan (DBL)</div>
+              <div class="ti-sub">For 2nd timers selling existing HDB</div>
+            </div>
+            <div class="toggle" id="dbl-toggle" onclick="toggleDBL()"></div>
+          </div>
+
+          <div class="dbl-fields" id="dbl-fields">
+            <div class="input-group">
+              <div class="input-label">DBL Available</div>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input type="text" id="dbl" placeholder="e.g. 100,000" oninput="saveAndCalc()">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>BSD is auto-calculated</strong> using IRAS bands and added to your payment schedule. CPF is strategically deployed at TOP to minimise cash outlay.
+      </div>
+
+      <!-- Booking Date Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="ph-icon">📅</div>
+          <div>
+            <h2>Booking Timeline</h2>
+            <p>Enter OTP date to generate key deadlines</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="input-group">
+            <div class="input-label">OTP Booking Date</div>
+            <div class="input-wrap">
+              <input type="date" id="otp-date" oninput="saveDates(); calcDates()" style="padding-left:14px; color-scheme:dark;">
+            </div>
+          </div>
+          <div id="date-results" style="display:none;">
+            <div class="section-divider"><span>Key Deadlines</span></div>
+            <div id="date-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Results -->
+    <div class="results-panel" id="results">
+      <!-- Populated by JS -->
+    </div>
+
+  </div>
+
+  <!-- Full-width Booking Timeline -->
+  <div id="booking-timeline-wrap" style="display:none; margin-top:32px;">
+    <div class="panel" style="overflow:visible;">
+      <div class="panel-header">
+        <div class="ph-icon">🗓</div>
+        <div>
+          <h2 id="timeline-heading">EC Booking Timeline</h2>
+          <p id="timeline-scenario-label">Key dates and payment sequence</p>
+        </div>
+      </div>
+      <div class="panel-body" style="padding:28px 32px 36px;">
+        <div id="booking-timeline-inner"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let scheme = 'dps';
+let dblEnabled = false;
+
+function setScheme(s) {
+  scheme = s;
+  document.getElementById('btn-dps').classList.toggle('active', s === 'dps');
+  document.getElementById('btn-nps').classList.toggle('active', s === 'nps');
+  const _d = getStore(); _d.scheme = s; setStore(_d);
+  if (document.getElementById('price').value) calc();
+}
+
+function toggleDBL() {
+  dblEnabled = !dblEnabled;
+  document.getElementById('dbl-toggle').classList.toggle('on', dblEnabled);
+  document.getElementById('dbl-fields').classList.toggle('visible', dblEnabled);
+  const _d2 = getStore(); _d2.dbl_on = dblEnabled ? '1' : '0'; setStore(_d2);
+  if (document.getElementById('price').value) calc();
+}
+
+function parseNum(id) {
+  const val = document.getElementById(id).value.replace(/[^0-9.]/g, '');
+  return parseFloat(val) || 0;
+}
+
+function fmt(n, decimals=0) {
+  if (n === 0) return '—';
+  return '$' + n.toLocaleString('en-SG', {minimumFractionDigits: decimals, maximumFractionDigits: decimals});
+}
+
+function fmtPlain(n) {
+  if (n === 0) return '—';
+  return '$' + Math.round(n).toLocaleString('en-SG');
+}
+
+function calcBSD(price) {
+  // IRAS BSD rates effective on or after 15 Feb 2023 (residential)
+  // Rounded down to nearest dollar, minimum $1
+  let bsd = 0;
+  const bands = [
+    [180000,   0.01],
+    [180000,   0.02],
+    [640000,   0.03],
+    [500000,   0.04],
+    [1500000,  0.05],
+    [Infinity, 0.06]
+  ];
+  let remaining = price;
+  for (const [band, rate] of bands) {
+    const taxable = Math.min(remaining, band);
+    bsd += taxable * rate;
+    remaining -= taxable;
+    if (remaining <= 0) break;
+  }
+  return Math.max(1, Math.floor(bsd));
+}
+
+function calc() {
+  const price = parseNum('price');
+  const cpfTotal = parseNum('cpf');
+  const loanTotal = parseNum('loan');
+  const dblTotal = dblEnabled ? parseNum('dbl') : 0;
+
+  if (price === 0) return;
+
+  const bsd = calcBSD(price);
+
+  // Payment stages
+  const booking = Math.round(price * 0.05);   // 5% cash
+  const sp = Math.round(price * 0.15);         // 15%
+  const top = Math.round(price * 0.65);        // 65%
+  const csc = Math.round(price * 0.15);        // 15%
+
+  // ── LOGIC: MAS order = Cash first, CPF second, Loan last
+  // Count from the back: Loan fills last, CPF fills next, Cash covers remainder
+  // For DPS: loan disburses in 2 tranches: TOP gets loan portion, CSC gets rest
+
+  let stages = [];
+
+  if (scheme === 'dps') {
+    // Loan splits: CSC = min(csc, loanTotal); rest of loan at TOP
+    const loanAtCSC = Math.min(csc, loanTotal);
+    const loanAtTOP = loanTotal - loanAtCSC;
+
+    // At TOP: need to fill (top - loanAtTOP) with CPF + DBL + Cash
+    const topNeeds = top - loanAtTOP;
+
+    // CPF strategy: reserve CPF for TOP to minimize cash there
+    // BSD: use CPF first up to CPF total, rest cash
+    // S&P: use remaining CPF, rest cash (but we want to save CPF for TOP)
+    // Optimal: Use as little CPF as possible early, save max for TOP
+
+    // Step 1: How much CPF needed at TOP?
+    const cpfForTOP = Math.min(cpfTotal, Math.max(0, topNeeds - dblTotal));
+    const cpfForBSD = Math.min(cpfTotal - cpfForTOP, bsd);
+    const cpfForSP = Math.min(cpfTotal - cpfForTOP - cpfForBSD, sp);
+    const cpfUsed = cpfForTOP + cpfForBSD + cpfForSP;
+
+    // Cash at each stage
+    const cashBooking = booking;
+    const cashSP = sp - cpfForSP;
+    const cashBSD = bsd - cpfForBSD;
+
+    // At TOP after CPF + DBL + Loan
+    const dblUsed = Math.min(dblTotal, Math.max(0, topNeeds - cpfForTOP));
+    const cashTOP = Math.max(0, topNeeds - cpfForTOP - dblUsed);
+
+    const totalCash = cashBooking + cashSP + cashBSD + cashTOP;
+    const totalCPF = cpfForBSD + cpfForSP + cpfForTOP;
+    const totalLoan = loanAtTOP + loanAtCSC;
+    const shortfall = Math.max(0, price + bsd - totalCash - totalCPF - totalLoan - dblUsed);
+
+    stages = [
+      { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0 },
+      { stage: 'Exercise S&P', when: 'Within 9 weeks', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0 },
+      { stage: 'Buyer Stamp Duty', when: 'Within 14 days of S&P', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0 },
+      { stage: 'Construction', when: '~3 years', pct: '0%', total: 0, cash: 0, cpf: 0, loan: 0, dbl: 0, nil: true },
+      { stage: 'TOP — Keys', when: 'Year 3–4', pct: '65%', total: top, cash: cashTOP, cpf: cpfForTOP, loan: loanAtTOP, dbl: dblUsed },
+      { stage: 'CSC — Completion', when: '~12 months after TOP', pct: '15%', total: csc, cash: 0, cpf: 0, loan: loanAtCSC, dbl: 0 },
+    ];
+
+    renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd, {
+      cashBooking, cashSP, cashBSD, cashTOP, cpfForBSD, cpfForSP
+    });
+
+  } else {
+    // NPS: loan disburses progressively from foundation. Simplified as:
+    // 5% cash (booking), 15% cash+CPF (S&P), BSD, then progressive milestones
+    // Milestones during construction: ~55% total via loan
+    // TOP: remaining 25%, CSC: 15% — all loan
+    // We simplify construction progressive as 10 equal stages total = 55% via loan
+
+    const construction = Math.round(price * 0.55); // foundation onward (approx)
+    const loanForConstruction = Math.min(construction, loanTotal);
+    const loanRemaining = loanTotal - loanForConstruction;
+
+    const cpfForBSD = Math.min(cpfTotal, bsd);
+    const cpfForSP = Math.min(cpfTotal - cpfForBSD, sp);
+    const cashSP = sp - cpfForSP;
+    const cashBSD = bsd - cpfForBSD;
+    const cashBooking = booking;
+
+    const totalLoan = loanTotal;
+    const totalCPF = cpfForBSD + cpfForSP;
+    const totalCash = cashBooking + cashSP + cashBSD;
+
+    const milestones = [
+      { name: 'Foundation', pct: '10%', amt: Math.round(price * 0.10) },
+      { name: 'Concrete Framework', pct: '10%', amt: Math.round(price * 0.10) },
+      { name: 'Brick Walls', pct: '5%', amt: Math.round(price * 0.05) },
+      { name: 'Ceiling / Roofing', pct: '5%', amt: Math.round(price * 0.05) },
+      { name: 'Doors & Windows', pct: '5%', amt: Math.round(price * 0.05) },
+      { name: 'Carpark / Drainage', pct: '5%', amt: Math.round(price * 0.05) },
+      { name: 'TOP', pct: '25%', amt: Math.round(price * 0.25) },
+      { name: 'CSC', pct: '15%', amt: Math.round(price * 0.15) },
+    ];
+
+    let loanLeft = loanTotal;
+    stages = [
+      { stage: 'Booking / OTP', when: 'Day 1 · Cash only', pct: '5%', total: booking, cash: booking, cpf: 0, loan: 0, dbl: 0 },
+      { stage: 'Exercise S&P', when: 'Within 9 weeks', pct: '15%', total: sp, cash: cashSP, cpf: cpfForSP, loan: 0, dbl: 0 },
+      { stage: 'Buyer Stamp Duty', when: 'Within 14 days', pct: '—', total: bsd, cash: cashBSD, cpf: cpfForBSD, loan: 0, dbl: 0 },
+    ];
+
+    for (const m of milestones) {
+      const l = Math.min(loanLeft, m.amt);
+      loanLeft -= l;
+      stages.push({ stage: m.name, when: 'Progressive', pct: m.pct, total: m.amt, cash: 0, cpf: 0, loan: l, dbl: 0 });
+    }
+
+    const shortfall = Math.max(0, price + bsd - totalCash - totalCPF - totalLoan);
+    renderResults(stages, totalCash, totalCPF, totalLoan, 0, 0, shortfall, price, bsd, {
+      cashBooking, cashSP, cashBSD, cashTOP: 0, cpfForBSD, cpfForSP
+    });
+  }
+}
+
+function renderResults(stages, totalCash, totalCPF, totalLoan, dblUsed, dblTotal, shortfall, price, bsd, breakdown) {
+  const colClass = dblEnabled ? 'dps-cols' : 'nps-cols';
+  const hasDbl = dblEnabled && dblUsed > 0;
+
+  // Build header columns
+  const dblCol = hasDbl ? `<span>DBL</span>` : '';
+  const dblColH = hasDbl ? `<span>DBL</span>` : '';
+
+  // Stage rows
+  let rowsHTML = '';
+  for (const s of stages) {
+    if (s.nil) {
+      rowsHTML += `
+        <div class="st-row ${colClass} nil-row">
+          <div class="st-stage">${s.stage}<span class="stage-when">${s.when}</span></div>
+          <div class="st-num">${s.pct}</div>
+          <div class="st-num nil" colspan="5">No payment due</div>
+          <div class="st-num nil">—</div>
+          <div class="st-num nil">—</div>
+          <div class="st-num nil">—</div>
+          ${hasDbl ? `<div class="st-num nil">—</div>` : ''}
+          <div class="st-num nil">$0</div>
+        </div>`;
+      continue;
+    }
+    const total = s.cash + s.cpf + s.loan + s.dbl;
+    const barSegs = buildBar(s.cash, s.cpf, s.loan, s.dbl, total);
+    rowsHTML += `
+      <div class="st-row ${colClass}">
+        <div class="st-stage">${s.stage}<span class="stage-when">${s.when}</span>
+          ${total > 0 ? `<div class="mini-bar">${barSegs}</div>` : ''}
+        </div>
+        <div class="st-num">${s.pct}</div>
+        <div class="st-num">${fmtN(s.total)}</div>
+        <div class="st-num cash">${fmtN(s.cash)}</div>
+        <div class="st-num cpf">${fmtN(s.cpf)}</div>
+        <div class="st-num loan">${fmtN(s.loan)}</div>
+        ${hasDbl ? `<div class="st-num dbl">${fmtN(s.dbl)}</div>` : ''}
+        <div class="st-num total">${fmtN(total)}</div>
+      </div>`;
+  }
+
+  // Totals row
+  rowsHTML += `
+    <div class="st-row ${colClass} total-row">
+      <div class="st-stage">TOTAL</div>
+      <div class="st-num">100%</div>
+      <div class="st-num total">${fmtPlain(price + bsd)}</div>
+      <div class="st-num cash">${fmtPlain(totalCash)}</div>
+      <div class="st-num cpf">${fmtPlain(totalCPF)}</div>
+      <div class="st-num loan">${fmtPlain(totalLoan)}</div>
+      ${hasDbl ? `<div class="st-num dbl">${fmtPlain(dblUsed)}</div>` : ''}
+      <div class="st-num total">${fmtPlain(totalCash + totalCPF + totalLoan + dblUsed)}</div>
+    </div>`;
+
+  const ok = shortfall === 0;
+  const dblBuffer = dblEnabled ? Math.max(0, dblTotal - dblUsed) : 0;
+
+  // Cash phases for DPS
+  let cashTimelineHTML = '';
+  if (scheme === 'dps') {
+    const phase1 = breakdown.cashBooking;
+    const phase2 = breakdown.cashSP + breakdown.cashBSD;
+    const phase3 = breakdown.cashTOP || 0;
+    const maxPhase = Math.max(phase1, phase2, phase3, 1);
+
+    cashTimelineHTML = `
+    <div class="cash-timeline anim">
+      <div class="ct-title">📅 Cash Required — When</div>
+      <div class="ct-phases">
+        <div class="ct-phase">
+          <span class="cp-when">Day 1</span>
+          <div class="ct-bar-wrap">
+            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:${(phase1/maxPhase*100).toFixed(1)}%"></div></div>
+            <div class="ct-breakdown">OTP Booking Fee</div>
+          </div>
+          <div class="ct-amt">${fmtPlain(phase1)}</div>
+        </div>
+        <div class="ct-phase">
+          <span class="cp-when">Within ~3 months</span>
+          <div class="ct-bar-wrap">
+            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:${(phase2/maxPhase*100).toFixed(1)}%"></div></div>
+            <div class="ct-breakdown">S&P + BSD to IRAS</div>
+          </div>
+          <div class="ct-amt">${fmtPlain(phase2)}</div>
+        </div>
+        <div class="ct-phase">
+          <span class="cp-when">Construction (~3yr)</span>
+          <div class="ct-bar-wrap">
+            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:0%"></div></div>
+            <div class="ct-breakdown">DPS — nothing due</div>
+          </div>
+          <div class="ct-amt" style="color:var(--text-muted)">$0</div>
+        </div>
+        ${phase3 > 0 ? `
+        <div class="ct-phase">
+          <span class="cp-when">At TOP</span>
+          <div class="ct-bar-wrap">
+            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:${(phase3/maxPhase*100).toFixed(1)}%"></div></div>
+            <div class="ct-breakdown">After CPF & DBL deployed</div>
+          </div>
+          <div class="ct-amt" style="color:var(--cash)">${fmtPlain(phase3)}</div>
+        </div>` : `
+        <div class="ct-phase">
+          <span class="cp-when">At TOP</span>
+          <div class="ct-bar-wrap">
+            <div class="ct-bar-track"><div class="ct-bar-fill" style="width:0%"></div></div>
+            <div class="ct-breakdown">Fully covered by CPF + Loan + DBL</div>
+          </div>
+          <div class="ct-amt" style="color:var(--green)">$0</div>
+        </div>`}
+      </div>
+    </div>`;
+  }
+
+  const html = `
+    <!-- Summary strip -->
+    <div class="summary-strip anim">
+      <div class="sum-card c-cash">
+        <span class="sc-tag">Total Cash</span>
+        <span class="sc-amt">${fmtPlain(totalCash)}</span>
+      </div>
+      <div class="sum-card c-cpf">
+        <span class="sc-tag">CPF Used</span>
+        <span class="sc-amt">${fmtPlain(totalCPF)}</span>
+      </div>
+      <div class="sum-card c-loan">
+        <span class="sc-tag">Bank Loan</span>
+        <span class="sc-amt">${fmtPlain(totalLoan)}</span>
+      </div>
+      <div class="sum-card c-dbl">
+        <span class="sc-tag">${hasDbl ? 'DBL Used' : 'DBL'}</span>
+        <span class="sc-amt">${hasDbl ? fmtPlain(dblUsed) : '—'}</span>
+      </div>
+    </div>
+
+    <!-- Feasibility -->
+    <div class="feasibility anim">
+      <div class="feas-left">
+        <div class="feas-dot" style="background:${ok ? 'var(--green)' : 'var(--red)'}; box-shadow: 0 0 8px ${ok ? 'rgba(91,184,138,0.4)' : 'rgba(232,93,117,0.4)'}"></div>
+        <div>
+          <div class="feas-label" style="color:${ok ? 'var(--green)' : 'var(--red)'}">${ok ? '✓ Deal is fully covered' : '⚠ Shortfall detected'}</div>
+          <div class="feas-sub">${ok ? 'All payments can be met with available funds' : 'Additional funds required to proceed'}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;align-items:center">
+        <div class="feas-shortfall" style="color:var(--cash)">${fmtPlain(totalCash)}<br><span style="font-size:11px;font-family:Outfit;font-weight:400;color:var(--text-dim)">cash needed</span></div>
+        ${!ok ? `<div class="feas-shortfall" style="color:var(--red)">-${fmtPlain(shortfall)}<br><span style="font-size:11px;font-family:Outfit;font-weight:400;color:var(--text-dim)">shortfall</span></div>` : ''}
+        ${ok && hasDbl && dblBuffer > 0 ? `<div class="feas-shortfall" style="color:var(--dbl)">${fmtPlain(dblBuffer)}<br><span style="font-size:11px;font-family:Outfit;font-weight:400;color:var(--text-dim)">DBL buffer</span></div>` : ''}
+      </div>
+    </div>
+
+    <!-- Stage Table -->
+    <div class="stage-table anim">
+      <div class="st-header ${colClass}">
+        <span>Stage</span>
+        <span>%</span>
+        <span>Amount</span>
+        <span style="color:var(--cash)">Cash</span>
+        <span style="color:var(--cpf)">CPF</span>
+        <span style="color:var(--loan)">Loan</span>
+        ${hasDbl ? `<span style="color:var(--dbl)">DBL</span>` : ''}
+        <span style="color:var(--gold)">Total</span>
+      </div>
+      ${rowsHTML}
+    </div>
+
+    <!-- BSD note -->
+    <div class="info-box anim">
+      <strong>BSD: ${fmtPlain(bsd)}</strong> auto-calculated on ${fmtPlain(price)} purchase price using IRAS progressive bands (1%–4%). 
+      ${scheme === 'dps' ? ' CPF is strategically held back from S&P and deployed at TOP to minimise cash needed at that stage.' : ''}
+    </div>
+
+    ${cashTimelineHTML}
+
+    <!-- Shortfall warning -->
+    <div class="warning-box ${shortfall > 0 ? 'visible' : ''} anim">
+      <strong>Shortfall of ${fmtPlain(shortfall)}</strong> — client needs additional funds. 
+      Consider: increasing DBL (higher HDB valuation), more CPF, or a higher loan quantum if MSR allows.
+    </div>
+  `;
+
+  document.getElementById('results').innerHTML = html;
+}
+
+function fmtN(n) {
+  if (!n || n === 0) return '<span style="color:var(--text-muted)">—</span>';
+  return '$' + Math.round(n).toLocaleString('en-SG');
+}
+
+function buildBar(cash, cpf, loan, dbl, total) {
+  if (total === 0) return '';
+  let html = '';
+  if (cash > 0) html += `<div class="mb-seg" style="background:var(--cash);width:${(cash/total*100).toFixed(1)}%"></div>`;
+  if (cpf > 0) html += `<div class="mb-seg" style="background:var(--cpf);width:${(cpf/total*100).toFixed(1)}%"></div>`;
+  if (loan > 0) html += `<div class="mb-seg" style="background:var(--loan);width:${(loan/total*100).toFixed(1)}%"></div>`;
+  if (dbl > 0) html += `<div class="mb-seg" style="background:var(--dbl);width:${(dbl/total*100).toFixed(1)}%"></div>`;
+  return html;
+}
+
+// Format inputs with commas as user types
+['price','cpf','loan','dbl'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', function() {
+    const raw = this.value.replace(/[^0-9]/g, '');
+    const formatted = raw ? parseInt(raw).toLocaleString('en-SG') : '';
+    this.value = formatted;
+  });
+});
+
+// ── Persistence via URL hash (works on iPhone iCloud, no server needed) ──
+function getStore() {
+  try {
+    const h = location.hash.slice(1);
+    return h ? JSON.parse(decodeURIComponent(h)) : {};
+  } catch(e) { return {}; }
+}
+
+function setStore(data) {
+  try {
+    history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(data)));
+  } catch(e) {}
+}
+
+function saveAndCalc() {
+  const data = getStore();
+  ['price','cpf','loan','dbl'].forEach(id => {
+    data[id] = document.getElementById(id).value;
+  });
+  data.scheme = scheme;
+  data.dbl_on = dblEnabled ? '1' : '0';
+  setStore(data);
+  calc();
+}
+
+function saveDates() {
+  const d = document.getElementById('otp-date').value;
+  if (d) {
+    const data = getStore();
+    data.otp_date = d;
+    setStore(data);
+  }
+}
+
+function clearAll() {
+  ['price','cpf','loan','dbl'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('otp-date').value = '';
+  history.replaceState(null, '', '#');
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('date-results').style.display = 'none';
+  document.getElementById('booking-timeline-wrap').style.display = 'none';
+  if (dblEnabled) toggleDBL();
+  setScheme('dps');
+}
+
+function loadSaved() {
+  const data = getStore();
+  if (!data || !Object.keys(data).length) return; // nothing saved — stay blank
+
+  ['price','cpf','loan','dbl'].forEach(id => {
+    if (data[id]) document.getElementById(id).value = data[id];
+  });
+
+  if (data.scheme) setScheme(data.scheme);
+  if (data.dbl_on === '1' && !dblEnabled) toggleDBL();
+
+  if (data.otp_date) {
+    document.getElementById('otp-date').value = data.otp_date;
+    calcDates();
+  }
+
+  if (data.price) calc();
+}
+
+// Initial load — restore or start blank
+loadSaved();
+
+// ── Booking Timeline ──
+function calcDates() {
+  const otpInput = document.getElementById('otp-date').value;
+  if (!otpInput) {
+    document.getElementById('date-results').style.display = 'none';
+    document.getElementById('booking-timeline-wrap').style.display = 'none';
+    return;
+  }
+
+  const otp = new Date(otpInput);
+
+  // Key dates
+  // S&P Deadline = 9 weeks (63 days) from OTP
+  const spDeadline = addDays(otp, 63);
+
+  // Eligibility approved / S&P Issued: ~3 weeks after OTP (docs submitted ASAP)
+  const eligDate = addDays(otp, 21);
+
+  // Scenario A: Within 9 weeks
+  // S&P Issued → Exercise S&P: max 3 weeks (21 days)
+  // Exercise S&P → BSD paid: max 2 weeks (14 days)
+  // 15% DP paid at point of exercising S&P
+  const spExDateA  = addDays(eligDate, 21);   // Exercise S&P: S&P Issued + max 3 weeks
+  const dp15DateA  = spExDateA;               // 15% DP due when S&P exercised
+  const bsdDateA   = addDays(spExDateA, 14);  // BSD: 2 weeks after exercising S&P
+
+  // Scenario B: Over 9 weeks
+  // S&P Issued late, exercise S&P at 9-week deadline (S&P + 15% DP together)
+  // BSD 2 weeks after exercise
+  const sp15DateB  = spDeadline;              // Exercise S&P at 9-week hard deadline
+  const bsdDateB   = addDays(sp15DateB, 14); // BSD: 2 weeks after
+
+  // Get payment amounts from current calc
+  const price = parseNum('price');
+  const bsd = calcBSD(price);
+  const booking = Math.round(price * 0.05);
+  const dp15 = Math.round(price * 0.15);
+
+  // Date pills for sidebar
+  const pills = [
+    { label: 'OTP / Booking Fee', date: otp, dot: 'var(--cash)', note: fmtPlain(booking) + ' cash' },
+    { label: 'Submit Docs (ASAP)', date: addDays(otp, 3), dot: 'var(--text-muted)', note: 'HDB eligibility check' },
+    { label: 'Eligibility Approved / S&P Issued', date: eligDate, dot: 'var(--gold)', note: '~3 weeks from OTP' },
+    { label: 'Exercise S&P (max 3 wks from S&P Issued)', date: spExDateA, dot: 'var(--loan)', note: 'Sign only' },
+    { label: 'BSD to IRAS (max 2 wks from exercise)', date: bsdDateA, dot: 'var(--cpf)', note: fmtPlain(bsd) + ' cash/CPF' },
+    { label: '15% Down Payment (completion)', date: spDeadline, dot: 'var(--gold)', note: fmtPlain(dp15) + ' cash/CPF' },
+  ];
+
+  let pillsHTML = '';
+  for (const p of pills) {
+    const daysFromOTP = Math.round((p.date - otp) / 86400000);
+    pillsHTML += `
+      <div class="date-pill">
+        <div class="dp-dot" style="background:${p.dot}"></div>
+        <div class="dp-label">${p.label}</div>
+        <div>
+          <span class="dp-date">${formatDate(p.date)}</span>
+          <span class="dp-days">${daysFromOTP > 0 ? '+' + daysFromOTP + 'd' : 'Day 0'}</span>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('date-list').innerHTML = pillsHTML;
+  document.getElementById('date-results').style.display = 'block';
+
+  // Build full-width visual timeline
+  renderBookingTimeline(otp, spDeadline, bsdDateA, dp15DateA, sp15DateB, bsdDateB, booking, dp15, bsd, price);
+}
+
+function renderBookingTimeline(otp, spDeadline, bsdA, dp15A, sp15B, bsdB, booking, dp15, bsd, price) {
+  const wrap = document.getElementById('booking-timeline-wrap');
+  const inner = document.getElementById('booking-timeline-inner');
+  wrap.style.display = 'block';
+
+  // Dates derived from rules:
+  // Eligibility / S&P Issued: ~3 weeks from OTP
+  // Scenario A: S&P Issued → Exercise S&P max 3 weeks → BSD max 2 weeks after exercise
+  const eligDateR   = addDays(otp, 21);
+  const spExDateR   = addDays(eligDateR, 21);  // S&P exercise deadline: +3 weeks from issued
+  const bsdDateAR   = addDays(spExDateR, 14);  // BSD deadline: +2 weeks from exercise
+
+  const nodesA = [
+    { title: '5% Booking Fee (OTP)', date: otp, amount: fmtPlain(booking), type: 'cash', highlight: true },
+    { title: 'Submit Docs', date: addDays(otp, 3), amount: 'ASAP', type: 'free', highlight: false },
+    { title: 'Eligibility Approved + S&P Issued', date: eligDateR, amount: '~3 weeks', type: 'free', highlight: false },
+    { title: 'Exercise S&P', date: spExDateR, amount: 'Sign only', type: 'free', highlight: false },
+    { title: 'BSD to IRAS', date: bsdDateAR, amount: fmtPlain(bsd), type: 'cpf', highlight: true },
+    { title: '15% Down Payment', date: spDeadline, amount: fmtPlain(dp15), type: 'mixed', highlight: true },
+  ];
+
+  const nodesA_bsd = null;
+
+  // Scenario B: S&P Issued late, hard deadline = 9 weeks from OTP
+  // Exercise S&P + 15% DP at 9-week mark, BSD 2 weeks after
+  // Scenario B: >9 weeks
+  // OTP → 9 weeks → Eligibility + S&P Issued → 3 weeks → Exercise S&P + 15% DP → 2 weeks → BSD
+  const spIssuedB  = spDeadline;                    // S&P Issued AT 9-week mark
+  const spExDateB  = addDays(spIssuedB, 21);        // Exercise S&P + 15% DP: +3 weeks from issued
+  const bsdDateB2  = addDays(spExDateB, 14);        // BSD: +2 weeks from exercise
+
+  const nodesB = [
+    { title: '5% Booking Fee (OTP)', date: otp, amount: fmtPlain(booking), type: 'cash', highlight: true },
+    { title: 'Submit Docs', date: addDays(otp, 3), amount: 'ASAP', type: 'free', highlight: false },
+    { title: 'Eligibility Approved + S&P Issued', date: spIssuedB, amount: '9 weeks', type: 'free', highlight: false },
+    { title: 'Exercised S&P + 15% Down Payment', date: spExDateB, amount: fmtPlain(dp15), type: 'mixed', highlight: true },
+    { title: 'BSD to IRAS', date: bsdDateB2, amount: fmtPlain(bsd), type: 'cpf', highlight: true },
+  ];
+
+  inner.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:40px;">
+
+      <!-- Scenario A -->
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(91,184,138,0.1);border:1px solid rgba(91,184,138,0.25);border-radius:20px;padding:4px 14px;margin-bottom:20px;">
+          <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green)">Scenario A — Within 9 Weeks</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">S&P Issued (~3 wks) → Exercise S&P within 3 weeks → BSD within 2 weeks → 15% DP at completion</div>
+        ${buildTimelineVisual(nodesA, nodesA_bsd, otp, dp15A, "WITHIN 9 WEEKS", {spIssued: eligDateR, spEx: spExDateR, label1: "~3 Weeks → S&P Issued", label2: "Max 3 Weeks → Exercise"})}
+      </div>
+
+      <div style="height:1px;background:var(--border);"></div>
+
+      <!-- Scenario B -->
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,67,0.1);border:1px solid rgba(212,168,67,0.25);border-radius:20px;padding:4px 14px;margin-bottom:20px;">
+          <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Scenario B — &gt;9 Weeks</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">OTP → 9 weeks → Eligibility + S&P Issued → Exercise S&P + 15% DP within 3 weeks → BSD within 2 weeks</div>
+        ${buildTimelineVisual(nodesB, null, otp, bsdDateB2, "> 9 WEEKS TOTAL", {spIssued: spIssuedB, spEx: spExDateB, label1: "9 Weeks → S&P Issued", label2: "Max 3 Weeks → Exercise"})}
+      </div>
+
+    </div>`;
+}
+
+function buildTimelineVisual(nodes, bsdNode, startDate, endDate, totalLabel, milestones) {
+  const uid = 'tl_' + Math.random().toString(36).slice(2,7);
+
+  // Build cards row — equal columns, no ticks in HTML
+  let colsHTML = '';
+  for (let i = 0; i < nodes.length; i++) {
+    const n = nodes[i];
+    colsHTML += `<div class="bk-col" id="${uid}_col_${i}">
+      <div class="bk-box ${n.highlight ? 'highlight' : ''}">
+        <div class="bk-title">${n.title}</div>
+        <div class="bk-date">${formatDate(n.date)}</div>
+        ${n.amount ? `<span class="bk-amount ${n.type}">${n.amount}</span>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // Bracket data
+  const spIssuedDate = milestones && milestones.spIssued ? milestones.spIssued : addDays(startDate, 21);
+  const spExDate     = milestones && milestones.spEx     ? milestones.spEx     : addDays(startDate, 42);
+  const totalSpan    = Math.max(1, endDate - startDate);
+  const wIssued      = ((spIssuedDate - startDate) / totalSpan);
+  const wEx          = ((spExDate - startDate) / totalSpan);
+  const bracket1Label = milestones && milestones.label1 ? milestones.label1 : '~3 Weeks → S&P Issued';
+  const bracket2Label = milestones && milestones.label2 ? milestones.label2 : 'Max 3 Weeks → Exercise';
+
+  // After DOM insert, draw canvas
+  setTimeout(() => {
+    const wrap = document.getElementById(uid + '_wrap');
+    if (!wrap) return;
+    const row = document.getElementById(uid + '_row');
+    const rowRect = row.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+
+    // Get center-x of each column
+    const cols = nodes.map((_, i) => document.getElementById(uid + '_col_' + i));
+    const colCenters = cols.map(c => {
+      const r = c.getBoundingClientRect();
+      return r.left - wrapRect.left + r.width / 2;
+    });
+
+    // Canvas height: from bottom of row to end of bracket area
+    const TICK_H   = 20;  // tick from card bottom to spine
+    const SPINE_Y  = rowRect.bottom - wrapRect.top + TICK_H; // spine Y in canvas coords
+    const BRK_H    = 32;  // bracket height below spine
+    const LBL_H    = 20;  // label below bracket
+    const TOTAL_H  = SPINE_Y + BRK_H + LBL_H + 50;
+
+    const canvas = document.getElementById(uid + '_canvas');
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = wrapRect.width * dpr;
+    canvas.height = TOTAL_H * dpr;
+    canvas.style.width  = wrapRect.width + 'px';
+    canvas.style.height = TOTAL_H + 'px';
+    wrap.style.paddingBottom = TOTAL_H + 'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const gold   = '#D4A843';
+    const cash   = '#E8756A';
+    const loan   = '#6B9FD4';
+    const dbl    = '#E8A86A';
+    const muted  = '#6B6B72';
+
+    // Draw spine
+    ctx.beginPath();
+    ctx.moveTo(colCenters[0], SPINE_Y);
+    ctx.lineTo(colCenters[colCenters.length - 1], SPINE_Y);
+    ctx.strokeStyle = gold;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Draw ticks and dots for each node
+    cols.forEach((col, i) => {
+      const cx = colCenters[i];
+      const colRect = col.getBoundingClientRect();
+      const cardBottom = colRect.bottom - wrapRect.top;
+
+      // Tick
+      ctx.beginPath();
+      ctx.moveTo(cx, cardBottom);
+      ctx.lineTo(cx, SPINE_Y);
+      ctx.strokeStyle = gold;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Dot on spine
+      ctx.beginPath();
+      ctx.arc(cx, SPINE_Y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = gold;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, SPINE_Y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#0D0D0F';
+      ctx.fill();
+    });
+
+    // Draw bracket arrows below spine
+    const W = wrapRect.width;
+    const x0 = colCenters[0];
+    const xEnd = colCenters[colCenters.length - 1];
+    const xIssued = x0 + (xEnd - x0) * wIssued;
+    const xEx     = x0 + (xEnd - x0) * wEx;
+
+    const brackets = [
+      { x1: x0,      x2: xIssued, color: cash,  label: bracket1Label },
+      { x1: xIssued, x2: xEx,     color: loan,  label: bracket2Label },
+      { x1: xEx,     x2: xEnd,    color: dbl,   label: 'Max 2 Weeks → BSD' },
+    ];
+
+    ctx.font = '600 11px Outfit, sans-serif';
+    const BRK_Y = SPINE_Y + 16;
+
+    brackets.forEach(b => {
+      if (b.x2 <= b.x1) return;
+      const mx = (b.x1 + b.x2) / 2;
+
+      // Horizontal line
+      ctx.beginPath();
+      ctx.moveTo(b.x1, BRK_Y);
+      ctx.lineTo(b.x2, BRK_Y);
+      ctx.strokeStyle = b.color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // End caps (vertical ticks)
+      [b.x1, b.x2].forEach(x => {
+        ctx.beginPath();
+        ctx.moveTo(x, BRK_Y - 6);
+        ctx.lineTo(x, BRK_Y + 6);
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      // Label
+      ctx.fillStyle = b.color;
+      ctx.textAlign = 'center';
+      ctx.fillText(b.label, mx, BRK_Y + 22);
+    });
+
+    // Total label
+    const TOTAL_Y = BRK_Y + 48;
+    ctx.strokeStyle = gold + '55';
+    ctx.lineWidth = 1.5;
+    const labelText = totalLabel || '9 WEEKS TOTAL';
+    const labelW = ctx.measureText(labelText).width + 24;
+    const lx = W / 2;
+    ctx.beginPath(); ctx.moveTo(x0, TOTAL_Y); ctx.lineTo(lx - labelW/2 - 10, TOTAL_Y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lx + labelW/2 + 10, TOTAL_Y); ctx.lineTo(xEnd, TOTAL_Y); ctx.stroke();
+    ctx.fillStyle = gold;
+    ctx.font = '700 11px Outfit, sans-serif';
+    ctx.letterSpacing = '2px';
+    ctx.fillText(labelText, lx, TOTAL_Y + 4);
+
+  }, 80);
+
+  return `
+    <div class="bk-timeline">
+      <div class="bk-canvas-wrap" id="${uid}_wrap">
+        <div class="bk-cards-row" id="${uid}_row">${colsHTML}</div>
+        <canvas id="${uid}_canvas"></canvas>
+      </div>
+    </div>`;
+}
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+</script>
+</body>
+</html>
