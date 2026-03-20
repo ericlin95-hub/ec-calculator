@@ -1840,15 +1840,12 @@ function calcDBL() {
   if (!val) { document.getElementById('dbl-calc-result').style.display = 'none'; return; }
 
   const p90 = Math.round(val * 0.90);
-  const commission = Math.round(val * 0.02);
-  const optionMoney = 5000;
-  const maxDBL = Math.max(0, p90 - outstanding - optionMoney - commission);
+  const maxDBL = Math.max(0, p90 - outstanding);
 
   const lines = [
     { label: '90% of Indicative Valuation', value: p90, color: 'var(--cpf)', sign: '' },
     { label: 'Less: Outstanding Loan', value: outstanding, color: 'var(--cash)', sign: '−' },
-    { label: 'Less: HDB Option Money', value: optionMoney, color: 'var(--cash)', sign: '−' },
-    { label: 'Less: Agent Commission (2%)', value: commission, color: 'var(--cash)', sign: '−' },
+
   ];
 
   document.getElementById('dbl-calc-lines').innerHTML = lines.map(l =>
