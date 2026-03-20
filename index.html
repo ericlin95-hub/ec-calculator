@@ -1845,7 +1845,6 @@ function calcDBL() {
   const lines = [
     { label: '90% of Indicative Valuation', value: p90, color: 'var(--cpf)', sign: '' },
     { label: 'Less: Outstanding Loan', value: outstanding, color: 'var(--cash)', sign: '−' },
-
   ];
 
   document.getElementById('dbl-calc-lines').innerHTML = lines.map(l =>
